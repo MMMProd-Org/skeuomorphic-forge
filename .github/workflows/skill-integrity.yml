@@ -55,7 +55,7 @@ jobs:
             "### Bloc FORGE PLAN"
             "## ROUTAGE OBLIGATOIRE PAR BESOIN"
             "sources consultees"
-            "commandes `python3 scripts/search.py ...` exactes"
+            'commandes `python3 scripts/search.py ...` exactes'
           )
           for text in "${required[@]}"; do
             if ! grep -Fq "$text" "$skill"; then
