@@ -71,7 +71,9 @@ Auto-triggers on: `skeuomorphic`, `industrial UI`, `3D button`, `gauge`, `meter`
 ```
 skeuomorphic-forge/
 |
-|-- SKILL.md                    <- The brain (600 lines of battle-tested rules)
+|-- skills/
+|   `-- skeuomorphic-forge/
+|       `-- SKILL.md            <- The brain (mandatory workflow + physical rules)
 |
 |-- references/                 <- The knowledge (19 files)
 |   |-- 00-golden-examples.md       Shadow stacks, components, anti-patterns

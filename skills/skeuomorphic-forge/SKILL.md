@@ -1,6 +1,6 @@
 ---
 name: skeuomorphic-forge
-description: "This skill should be used when the user asks to build physically-realistic skeuomorphic UI with Tailwind CSS — buttons, panels, gauges, knobs, CRT/LED displays, glass/metal effects, particle systems, industrial hardware. Triggers on requests mentioning: skeuomorphic, realistic depth, industrial UI, 3D button, gauge, meter, analog, tactile, material texture, retro-industrial, aerospace panel, DSP cockpit, VU meter, rotary knob, CRT display, rim light, metal recess, faceplate. Provides shadow stacks, material textures, lighting rules, and construction blueprints. Do NOT trigger for flat/minimal UI or standard Material/Shadcn components."
+description: "This skill should be used when the user asks to build physically-realistic skeuomorphic UI with Tailwind CSS — buttons, panels, gauges, knobs, CRT/LED displays, glass/metal effects, particle systems, industrial hardware. Triggers on requests mentioning: skeuomorphic, realistic depth, industrial UI, 3D button, gauge, meter, analog, tactile, material texture, retro-industrial, aerospace panel, DSP cockpit, VU meter, rotary knob, CRT display, rim light, metal recess, faceplate. Mandatory workflow: resolve bundled resources, read golden examples, run/search references, inspect a matching HTML asset when available, classify the physical object and shadow tier, then verify U0-U7 before delivery. Do NOT trigger for flat/minimal UI or standard Material/Shadcn components."
 ---
 
 # SKEUOMORPHIC FORGE — Instructions de generation UI
@@ -8,6 +8,58 @@ description: "This skill should be used when the user asks to build physically-r
 Ce skill produit de l'UI skeuomorphique physiquement realiste. Chaque composant genere DOIT ressembler a un objet physique reel (metal usine, verre CRT, aluminium brosse, Bakelite), pas un div plat avec une ombre CSS.
 
 Generer du code React/JSX avec Tailwind CSS + inline styles (`style={{}}`). Pas de classes CSS custom sauf indication contraire.
+
+---
+
+## CONTRAT D'EXECUTION OBLIGATOIRE
+
+Ce skill contient beaucoup d'exemples. Ne pas "s'inspirer vaguement". L'agent DOIT utiliser les ressources bundlees comme une bibliotheque de pieces a copier-adapter.
+
+Avant de produire du code, faire ces etapes dans l'ordre :
+
+1. **Resoudre le root des ressources** (voir section suivante). Si `references/`, `assets/` ou `scripts/search.py` sont introuvables, STOP : dire que le skill est mal installe au lieu d'inventer un style.
+2. **Lire `references/00-golden-examples.md`** pour partir d'un shadow stack, d'un pattern ou d'une table de lookup canonique.
+3. **Classer le composant** : objet physique nomme, theme, tier d'ombre, materiau, etat interactif.
+4. **Lancer `scripts/search.py`** avec au moins 2 requetes ciblees sauf si l'environnement ne permet aucun shell. Requetes minimales :
+   - type d'objet : `"button shadow"`, `"CRT display"`, `"gauge well"`, `"knob gradient"`, `"metal chassis"`, etc.
+   - finition : `"rim light"`, `"brushed metal"`, `"glass reflection"`, `"pressed active state"`, etc.
+5. **Ouvrir au moins 1 asset HTML pertinent** depuis `assets/` quand il existe pour ce type de composant. Copier-adapter sa structure visuelle. Ne pas repartir d'un div vierge.
+6. **Si page existante** : lire le code environnant AVANT de styler, puis consulter `references/17-context-scan-matrices.md`.
+7. **Si composant complexe** (chassis, CRT, gauge, dashboard, full-page) : consulter aussi `references/16-benchmark-lessons.md` et `references/18-verification-checklist.md`.
+8. **Verifier U0-U7** avant livraison. Un echec CRITICAL bloque la livraison.
+
+### Bloc FORGE PLAN
+
+Avant le code, produire un bloc court `FORGE PLAN` (ou un commentaire en haut du fichier si l'utilisateur exige code-only) :
+
+```text
+FORGE PLAN
+- Lecture: page existante ou greenfield, audience, role UI
+- Objet physique: ex. faceplate aluminium usine, switch Bakelite, CRT encastre
+- Theme/tier: warm industrial, Advanced 8+ layers, light source 135deg
+- Sources: 00-golden-examples + search("...") + asset "...html" + refs supplementaires
+- Verification cible: U0-U7, plus U9 si display/chassis
+```
+
+Si ce bloc ne peut pas citer au moins `00-golden-examples.md` et une recherche/asset pertinente, le travail n'est pas pret.
+
+### Resolution du root ressources
+
+Les installations peuvent exposer ce skill soit comme plugin (`skills/skeuomorphic-forge/SKILL.md` avec ressources au root du repo), soit comme dossier de skill autonome. Resoudre le root dans cet ordre :
+
+1. Si `references/00-golden-examples.md` existe dans le cwd, utiliser le cwd.
+2. Sinon, si `../../references/00-golden-examples.md` existe depuis le dossier de ce `SKILL.md`, utiliser `../..`.
+3. Sinon, chercher en remontant jusqu'a 3 parents un dossier qui contient `references/00-golden-examples.md`, `assets/`, et `scripts/search.py`.
+
+Exemples de commandes utiles depuis le root :
+
+```bash
+python3 scripts/search.py "button shadow" -n 5 --code-only
+python3 scripts/search.py "rim light" -n 5 --context 4
+python3 scripts/search.py "CRT display" --file deep-screen -n 3
+```
+
+Ne jamais remplacer ces recherches par de la memoire approximative si les fichiers sont accessibles.
 
 ---
 
@@ -40,6 +92,14 @@ Violer une seule de ces regles produit un composant visuellement casse.
 ## VERIFICATION PRE-LIVRAISON (checker AVANT de livrer)
 
 Un composant qui echoue un gate CRITICAL ne doit PAS etre livre.
+
+La livraison finale DOIT mentionner en 3-5 lignes :
+- sources consultees avec preuves : commandes `python3 scripts/search.py ...` exactes, asset HTML ouvert, references/sections utilisees
+- objet physique + tier choisi
+- nombre de couches shadow du composant principal
+- resultat U0-U7 (`pass` ou blocage explicite)
+
+Dire seulement "sources consultees" sans commandes exactes ni asset nomme est insuffisant. Le lecteur doit pouvoir reproduire le chemin de recherche.
 
 **U0 Context Scan (BLOCKING):** La page existante a ete analysee avant de styler. Palette, boutons existants, hierarchie des conteneurs identifies. Meme role = meme style que les siblings. Shadow stack source depuis les canoniques, pas invente.
 
@@ -203,6 +263,25 @@ Tous les patterns prets-a-l'emploi (bouton rest/hover/active, card avec rim ligh
 **Workflow** : charger `references/00-golden-examples.md`, trouver le pattern par son titre exact, copier le bloc, adapter les couleurs/tailles au theme cible. **IMPORTANT** : les blocs golden sont ecrits en CSS pur (`.button { box-shadow: ... }`). Conformement a la regle de generation (React/JSX + Tailwind + inline styles), **traduire chaque bloc CSS en `style={{ boxShadow: '...' }}` ou en classes Tailwind avant utilisation** — ne jamais coller le CSS verbatim dans une feuille de style globale ni creer de classes custom. Pour des materiaux avances (aluminium brosse detaille, acier, cuivre) consulter `references/08-metal-effects.md`. Pour le verre consulter `references/07-glass-effects.md`.
 
 Une etape CI (`Validate golden-examples references` dans `skill-integrity.yml`) verifie qu'a chaque release, tous les titres de section listes ci-dessus existent encore dans `references/00-golden-examples.md`. Si la verification echoue, soit le golden file a ete renomme, soit ce tableau doit etre mis a jour.
+
+---
+
+## ROUTAGE OBLIGATOIRE PAR BESOIN
+
+Lire le minimum utile, mais le lire vraiment. Pour chaque demande, suivre la ligne correspondante avant de coder :
+
+| Demande | Lire | Search obligatoire | Asset HTML a inspecter |
+|---|---|---|---|
+| Button / CTA / active press | `00-golden-examples.md` sections 1-2 + 17 matrix | `"button shadow" --code-only`, `"pressed active state"` | `power-button.html`, `color-mix-buttons.html`, `tile-buttons-divs.html` |
+| Toggle / rocker / switch | `00` + `02-hardware-animation-neumorphism.md` | `"switch recess"`, `"rocker active shadow"` | `skeuomorphic-switch.html`, `rimlight-toggle-switch.html`, `rocker-3d-switch.html` |
+| Gauge / VU / meter | `00` + `14-metal-recess-wells.md` + `16` | `"gauge well"`, `"needle shadow"`, `"metal recess"` | `tube-compressor-vu.html`, `credit-score-gauge.html`, `horizontal-thermometer.html` |
+| CRT / LCD / phosphor display | `00` + `07-glass-effects.md` + `11-retro-industrial-patterns.md` + `16` | `"CRT display"`, `"glass reflection"`, `"phosphor glow"` | `codepen-deep-screen.html`, `deep-screen-phosphor.html`, `lcd-db-display.html` |
+| Metal chassis / faceplate / dashboard | `00` + `15-detailed-chassis.md` + `11` + `18` | `"metal chassis"`, `"bezel screw"`, `"display well"` | `agile-tech-skeuomorphic-site.html`, `synthscore-analytics.html`, `autochord-alert-panel.html` |
+| Glass / lens / dome | `00` + `07-glass-effects.md` + `09-rim-light-effects.md` | `"glass reflection"`, `"rim light"` | CRT/display assets or relevant component asset |
+| Knob / lever / dial | `00` + `08-metal-effects.md` + `13-3d-depth-techniques.md` | `"knob gradient"`, `"lever shadow"` | `industrial-lever.html` |
+| Loading / progress / neumorphic light UI | `00` + `02` + `16` | `"neumorphic pressed"`, `"progress loader"` | `neumorphic-loading-circle.html`, `neumorphic-progress-loader.html`, `neumorphic-pressed-buttons.html` |
+
+Si plusieurs lignes s'appliquent, choisir la plus specifique puis ajouter une deuxieme recherche pour la finition dominante.
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "name": "skeuomorphic-forge",
-  "version": "1.0.0",
+  "version": "2.3.4",
   "description": "Create production-grade skeuomorphic UI with Tailwind CSS — industrial panels, gauges, meters, LED/nixie indicators, toggle switches, metal/glass/leather textures, neumorphic components, CRT displays, particle effects",
   "author": {
     "name": "MMMProd",
