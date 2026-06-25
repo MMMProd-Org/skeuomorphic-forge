@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.3.4 - 2026-06-18
+
+### Changed
+
+- Hardened the skeuomorphic skill execution contract so agents must inspect relevant examples and references before generating UI.
+- Added mandatory planning, evidence, and routing requirements for high-fidelity skeuomorphic component work.
+- Updated skill integrity checks to validate the nested runtime skill path.
+
 ## v2.3.3 - 2026-05-13
 
 ### Security

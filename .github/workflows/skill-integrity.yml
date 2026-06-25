@@ -25,17 +25,19 @@ jobs:
 
       - name: Check YAML frontmatter
         run: |
-          head -20 SKILL.md | grep -q "^name:" || { echo "::error::SKILL.md missing 'name' in frontmatter"; exit 1; }
-          head -20 SKILL.md | grep -q "^description:" || { echo "::error::SKILL.md missing 'description' in frontmatter"; exit 1; }
+          skill="skills/skeuomorphic-forge/SKILL.md"
+          head -20 "$skill" | grep -q "^name:" || { echo "::error::$skill missing 'name' in frontmatter"; exit 1; }
+          head -20 "$skill" | grep -q "^description:" || { echo "::error::$skill missing 'description' in frontmatter"; exit 1; }
           echo "Frontmatter OK"
 
       - name: Check file references exist
         run: |
+          skill="skills/skeuomorphic-forge/SKILL.md"
           errors=0
           for f in assets/*.html; do
             basename=$(basename "$f")
-            if ! grep -q "$basename" SKILL.md; then
-              echo "::error::$basename exists in assets/ but is not referenced in SKILL.md"
+            if ! grep -q "$basename" "$skill"; then
+              echo "::error::$basename exists in assets/ but is not referenced in $skill"
               errors=$((errors + 1))
             fi
           done
@@ -44,6 +46,24 @@ jobs:
             exit 1
           fi
           echo "All asset files referenced in SKILL.md"
+
+      - name: Check operating contract exists
+        run: |
+          skill="skills/skeuomorphic-forge/SKILL.md"
+          required=(
+            "## CONTRAT D'EXECUTION OBLIGATOIRE"
+            "### Bloc FORGE PLAN"
+            "## ROUTAGE OBLIGATOIRE PAR BESOIN"
+            "sources consultees"
+            'commandes `python3 scripts/search.py ...` exactes'
+          )
+          for text in "${required[@]}"; do
+            if ! grep -Fq "$text" "$skill"; then
+              echo "::error::Missing mandatory skill contract text in $skill: $text"
+              exit 1
+            fi
+          done
+          echo "Operating contract OK"
 
       - name: Validate golden-examples references
         run: |
@@ -219,12 +239,13 @@ jobs:
 
       - name: SKILL.md size cap (40KB max)
         run: |
-          size=$(wc -c < SKILL.md)
+          skill="skills/skeuomorphic-forge/SKILL.md"
+          size=$(wc -c < "$skill")
           if [ "$size" -gt 40960 ]; then
-            echo "::error::SKILL.md is ${size}B — exceeds 40KB context window budget. Split content to references/."
+            echo "::error::$skill is ${size}B — exceeds 40KB context window budget. Split content to references/."
             exit 1
           fi
-          echo "SKILL.md size OK: ${size}B (limit: 40960B)"
+          echo "$skill size OK: ${size}B (limit: 40960B)"
 
       - name: Skill directory structure
         run: |
