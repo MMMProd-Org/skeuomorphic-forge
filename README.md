@@ -16,6 +16,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/mmmprod/skeuomorphic-forge/pulls)
 [![GitHub stars](https://img.shields.io/github/stars/mmmprod/skeuomorphic-forge?style=social)](https://github.com/mmmprod/skeuomorphic-forge)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13367/badge)](https://www.bestpractices.dev/projects/13367)
 
 **A Claude Code skill that builds physically-realistic UI components.**
 
