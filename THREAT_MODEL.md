@@ -32,7 +32,7 @@ binaries and runs no network services.
 | Malicious or accidental code injection via PR | Required non-author + code-owner review, last-push approval, `required-ci` (branch ruleset on `main`). |
 | Compromised dependency | `dependency-review-action` (fail on `high`+), SHA-pinned actions. |
 | Vulnerable code introduced | CodeQL SAST + fuzzing on every PR. |
-| CI privilege abuse / token theft | Top-level `permissions: {}`, minimal per-job scopes, `persist-credentials: false`, OIDC instead of stored secrets. |
+| CI privilege abuse / token theft | Explicit least-privilege workflow permissions (`{}` or `contents: read`) with minimal per-job scopes, `persist-credentials: false`, OIDC instead of stored secrets. |
 | Tampered / forced history | Force-push and deletion blocked, linear history required. |
 | Supply-chain posture drift | OpenSSF Scorecard runs on push and weekly. |
 

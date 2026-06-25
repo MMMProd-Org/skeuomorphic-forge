@@ -50,7 +50,9 @@ Every pull request to `main` triggers:
 - **CodeQL** — static application security testing (SAST).
 - **Dependency Review** — fails on `high`+ dependency vulnerabilities (SCA).
 - **Fuzzing** — fuzz tests the search engine (`fuzz/search_fuzzer.py`).
-- **OpenSSF Scorecard** — supply-chain posture scoring.
+
+In addition, **OpenSSF Scorecard** runs on pushes to `main` and on a weekly
+schedule to score supply-chain posture (it is not a pull-request check).
 
 ## Reporting security issues
 

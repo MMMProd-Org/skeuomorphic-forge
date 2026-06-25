@@ -3,13 +3,13 @@
 ## Supported Versions
 
 Security fixes are developed on the default branch (`main`) and shipped in the
-next tagged release. Only the latest released minor version (currently the
-`v2.3.x` line) receives security updates.
+next tagged release. Only the **latest released minor version** receives
+security updates.
 
-| Version          | Supported          |
-| ---------------- | ------------------ |
-| latest `v2.3.x`  | :white_check_mark: |
-| older releases   | :x:                |
+| Version              | Supported          |
+| -------------------- | ------------------ |
+| latest minor release | :white_check_mark: |
+| older releases       | :x:                |
 
 A release stops receiving security updates as soon as a newer minor version is
 published. Users are expected to upgrade to the latest release to stay covered.
@@ -38,8 +38,8 @@ mitigation is available.
 The project keeps no long-lived secrets in source control or CI:
 
 - GitHub Actions workflows run with `persist-credentials: false` and the default
-  least-privilege `GITHUB_TOKEN` (top-level `permissions: {}` plus minimal
-  per-job scopes).
+  least-privilege `GITHUB_TOKEN`, declaring explicit least-privilege permissions
+  (top-level `permissions: {}` or `contents: read`, with minimal per-job scopes).
 - Workflows that publish security telemetry (e.g. OpenSSF Scorecard) use
   short-lived OIDC tokens (`id-token: write`) instead of stored credentials.
 - No API keys, tokens, or passwords are required to build, test, or run the
