@@ -20,7 +20,7 @@ particle effects).
 
 ## Search engine
 
-The corpus is searchable via the bundled CLI:
+The corpus is searchable via the bundled CLI (run from the repository root):
 
 ```bash
 python3 scripts/search.py "brushed metal knob"
