@@ -238,9 +238,26 @@ Indexes 1,699 sections across 19 references + 21 HTML assets. BM25-ranked result
 
 ---
 
+## Testing
+
+Automated unit tests live in `scripts/test_*.py` and run in CI on every push and
+pull request via the **Skill Integrity** workflow (the `required-ci` check). Run
+them locally with:
+
+```bash
+python3 -m unittest discover -s scripts -p 'test_*.py' -v
+```
+
+A fuzz harness for the search engine lives in `fuzz/search_fuzzer.py`. See
+[`CONTRIBUTING.md`](CONTRIBUTING.md) for the full testing policy — major changes
+must add or update tests.
+
 ## Contributing
 
-Contributions welcome! Feel free to:
+Contributions welcome! See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the review,
+testing, and CI requirements, and [`GOVERNANCE.md`](GOVERNANCE.md) for project
+roles and how elevated permissions are granted. Security reports follow
+[`SECURITY.md`](SECURITY.md).
 
 - Open an **issue** to report bugs or suggest new material/effect types
 - Submit a **pull request** with improvements or new reference guides
