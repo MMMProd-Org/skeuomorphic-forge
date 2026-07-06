@@ -182,6 +182,11 @@ jobs:
             echo "Filter '$key' OK"
           done
 
+      - name: Check recess rim floors (16.2 non-regression)
+        run: |
+          python3 scripts/check_rim_floors.py --selftest
+          python3 scripts/check_rim_floors.py
+
   prettier:
     name: Prettier Format Check
     runs-on: ubuntu-latest

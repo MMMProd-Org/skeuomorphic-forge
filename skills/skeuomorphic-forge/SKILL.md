@@ -192,8 +192,9 @@ Les ombres portees restent NOIRES `rgba(0,0,0,...)` quel que soit le theme.
 
 | But | Couleur | Opacite |
 |---|---|---|
-| Edge catch | `rgba(255,255,255,...)` | 0.03-0.08 |
+| Edge catch (surface plate uniquement) | `rgba(255,255,255,...)` | 0.03-0.08 |
 | Top bevel | `rgba(255,255,255,...)` | 0.08-0.15 |
+| **Levre / RIM d'un recess ou well (bord sup.)** | `rgba(255,250,240,...)` | **0.20-0.25 — plancher 0.20 (§16.2), JAMAIS 0.03-0.15** |
 | Specular hotspot | `rgba(255,240,220,...)` | 0.15-0.30 |
 | Active glow | `rgba(255,180,60,...)` | 0.10-0.40 |
 | CRT/LED emission | `hsl(35 100% 60%)` | Full |
@@ -218,7 +219,7 @@ focusVisible: { outline: '2px solid hsl(35 100% 60%)', outlineOffset: '2px' }
 
 ### Metal Recesses / Wells
 
-Chaque recess necessite les 4 zones : top attack, murs lateraux, bottom catch, levre exterieure.
+Chaque recess necessite les 4 zones : top attack, murs lateraux, bottom catch, **levre superieure (RIM)**. La levre superieure DOIT rester visible : derniere couche `inset 0 1px 0 rgba(255,250,240,0.20-0.25)` (plancher 0.20, §16.2 — ne PAS descendre aux valeurs d'edge catch 0.03-0.08). En dessous = rim invisible = well qui parait plat (echec #1 recurrent).
 
 | Composant | Min couches inset | Background |
 |---|---|---|
@@ -232,7 +233,7 @@ Chaque recess necessite les 4 zones : top attack, murs lateraux, bottom catch, l
 
 ### Rim Light
 
-Shadow stack construit D'ABORD (5+ couches), PUIS rim light par-dessus. Bord superieur 2-4x plus lumineux que le bas. Au moins UN pseudo-element overlay (`<span>` absolu ou Tailwind `before:` / `after:`) avec `radial-gradient` pour hotspot concentre. Rim light opacity max 0.25 (specular hotspots et active glows peuvent aller plus haut — voir tableau Eclairage). `pointerEvents: "none"` sur les overlays.
+Shadow stack construit D'ABORD (5+ couches), PUIS rim light par-dessus. Bord superieur 2-4x plus lumineux que le bas. Au moins UN pseudo-element overlay (`<span>` absolu ou Tailwind `before:` / `after:`) avec `radial-gradient` pour hotspot concentre. Rim light opacity de la levre superieure d'un recess/well : **0.20-0.25, plancher 0.20 NON NEGOCIABLE** (en dessous = rim invisible = well qui parait plat — echec #1 recurrent, cf. `references/16-benchmark-lessons.md` §16.2). Ne PAS confondre avec l'edge catch d'une surface plate (0.03-0.08). Specular hotspots et active glows peuvent aller plus haut — voir tableau Eclairage. `pointerEvents: "none"` sur les overlays.
 
 **INTERDIT** : `border: 1px solid rgba(255,255,255,0.1)` comme "rim light" (border uniforme = cadre photo). `box-shadow: 0 0 20px rgba(255,255,255,0.1)` seul (glow uniforme = neon).
 

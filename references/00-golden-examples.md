@@ -39,7 +39,7 @@ boxShadow: `
 /* Light goes on the KNOB that sits inside, not on the rail. */
 ```
 
-From production code (not shipped with this skill) (display well — 9 layers):
+From production code (not shipped with this skill) (display well — 10 layers, incl. mandatory top rim >=0.20):
 
 ```javascript
 boxShadow: `
@@ -50,6 +50,7 @@ boxShadow: `
   inset -4px 0 12px rgba(0,0,0,0.6),       /* S: right gorge wall */
   inset 0 0 40px rgba(0,5,15,0.3),         /* S: ambient inset well */
   inset 0 0 30px rgba(255,180,60,0.02),    /* L: warm glow trapped in well */
+  inset 0 1px 0 rgba(255,250,240,0.22),    /* L: TOP machined-lip RIM — keep >=0.20 (§16.2). THIS is what makes the well read as finished, not flat. NEVER lower to edge-catch (0.03-0.08) values. */
   0 0 0 1px rgba(0,0,0,0.95),              /* S: rim line */
   0 1px 0 rgba(255,255,255,0.03)           /* L: bottom catch line */
 `;
@@ -110,7 +111,7 @@ box-shadow:
   inset -10px 10px 18px rgba(0, 0, 0, 0.9),
   inset 10px -10px 18px rgba(0, 0, 0, 0.9),
   inset -10px -10px 18px rgba(0, 0, 0, 0.9),
-  /* External — rim light and base shadow */ 0 1px 0 rgba(255, 255, 255, 0.05),
+  /* External — rim light and base shadow */ 0 1px 0 rgba(255, 250, 240, 0.22), /* warm machined lip — RIM floor >=0.20 (§16.2); was 0.05 (invisible) */
   0 2px 0 rgba(255, 255, 255, 0.02),
   0 -1px 0 rgba(0, 0, 0, 0.9),
   0 -2px 4px rgba(0, 0, 0, 0.6),
