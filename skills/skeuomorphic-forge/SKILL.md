@@ -109,7 +109,7 @@ Dire seulement "sources consultees" sans commandes exactes ni asset nomme est in
 
 **U3 Construction (HIGH):** Objet physique nomme explicitement. 4 couches : chassis + profondeur + eclairage + detail. Ordre d'assemblage respecte (C8).
 
-**U4 Hardware (HIGH):** Vis aux coins avec radial-gradient sphere + 5 couches d'ombre + slot torx/phillips. Vis sur METAL uniquement, jamais sur verre/ecran.
+**U4 Hardware (HIGH):** Vis aux coins avec radial-gradient sphere + 7 couches d'ombre + slot torx/phillips. Vis sur METAL uniquement, jamais sur verre/ecran.
 
 **U5 Interaction States (HIGH):** hover (lift + expand shadow), active (depress + compress), disabled (opacity 0.5 + desaturate), focus-visible (outline 2px). Le shadow stack CHANGE entre les etats.
 
@@ -256,7 +256,7 @@ Tous les patterns prets-a-l'emploi (bouton rest/hover/active, card avec rim ligh
 | Bouton complet Rest/Hover/Active | `## 2. COMPLETE BUTTON — Rest / Hover / Active` |
 | Industrial Circuit Relay Button | `### Industrial Circuit Relay Button` |
 | Card avec Rim Light | `## 3. COMPLETE CARD WITH RIM LIGHT` |
-| Tete de vis (5 couches + slot torx) | `## 4. SCREW HEAD (5 layers + radial gradient)` |
+| Tete de vis (7 couches + slot torx) | `## 4. SCREW HEAD (7 layers + radial gradient)` |
 | Phosphor / CRT Text Glow (amber, rouge) | `## 5. PHOSPHOR / CRT TEXT GLOW` |
 | Silkscreen Label | `## 6. SILKSCREEN LABEL` |
 | Metal brosse / Sphere knob / Chrome / Cuir / Bois | `## 7. MATERIAL SURFACE GRADIENTS` |
@@ -318,7 +318,7 @@ Pour les autres themes (cool steel, deep purple, military, vintage audio, CRT te
 | 2-3 couches box-shadow | 5-15 couches, blur gradue |
 | Vis sur surface plate | Profondeur D'ABORD, vis par-dessus |
 | Vis sur verre/ecran | Vis sur METAL uniquement |
-| Vis cercle plat 1 inset | Radial gradient sphere + 5 couches + slot torx |
+| Vis cercle plat 1 inset | Radial gradient sphere + 7 couches + slot torx |
 | Carte qui resize avec contenu | width+height explicites, frame fixe |
 | Recess sans inner rim light | 1px warm border au bord, top plus lumineux |
 | 1-3 inset pour ecran | 12+ couches inset + inner rim light |

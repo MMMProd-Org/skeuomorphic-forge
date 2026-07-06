@@ -260,7 +260,7 @@ const bottomRimStyle: React.CSSProperties = {
 
 ---
 
-## 4. SCREW HEAD (5 layers + radial gradient)
+## 4. SCREW HEAD (7 layers + radial gradient)
 
 From production code (not shipped with this skill):
 
@@ -277,6 +277,8 @@ const screwStyle: React.CSSProperties = {
     inset 0 -0.5px 0 rgba(255,255,255,0.2), /* L: bottom edge catch */
     0 1px 1px rgba(0,0,0,0.9),              /* S: close cast */
     0 2px 3px rgba(0,0,0,0.6),              /* S: mid cast */
+    0 3px 5px rgba(0,0,0,0.45),             /* S: far cast (§16.5: screws sit ON the surface, 7-layer min for pronounced depth) */
+    0 5px 9px rgba(0,0,0,0.3),              /* S: ambient drop (§16.5) */
     0 0 0 0.5px rgba(0,0,0,0.8)             /* S: rim line */
   `,
   zIndex: 20,
