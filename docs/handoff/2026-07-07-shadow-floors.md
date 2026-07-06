@@ -36,6 +36,9 @@ Nothing is pushed. CI reproduced locally is green.
 - [x] Build a non-regression CI checker (`scripts/check_shadow_floors.py`). (commit `fa06344`, generalized in `7b2841a`)
 - [x] Fix §16.5 screw floor (5→7 layers), sync the 3 coupled spots + CI heading. (commit `7b2841a`)
 - [x] Generalize the pattern: measure §16.3 text (holds 4/4), §16.15 light-bars focus (3/3) + incident (4/4). No patch needed.
+- [x] Generalize §16.13 (no border on display wells) + §16.7 (2 screen overlays) — measured arm B 4/4
+      (natural CRT-in-metal request, no cue). BOTH HOLD, no patch. Work done on branch
+      `continue/shadow-floors` (off `fix/rim-floor-visibility`). See §5 for the numbers.
 - [x] Keep the eval harness as the non-regression method (the thing 5 audits lacked).
 
 ### ACTIVE (now — the decision point)
@@ -134,6 +137,8 @@ heading, update BOTH the golden file AND the CI list AND the SKILL.md citation t
 | §16.3 text | no (U6 already aligned >=0.85/0.5/0.35) | 4/4 conforme (0.9 / 0.55-0.6 / 0.40-0.42) | holds, no patch |
 | §16.15 light-bar focus | no | 3/3 (agents read §16.15 -> build a real slit) | holds, no patch |
 | §16.15 light-bar incident | no | 4/4 (premium prompt, no light requested -> still sourced) | holds, no patch |
+| §16.7 screen overlays | no (rule lives in §16, agents read it) | 4/4 (glass reflection 125deg + phosphor emission; agent-1 exact 270deg content-depth + 125deg reflection opposed) | holds, no patch |
+| §16.13 no border on well | no VISUAL failure (literal divergence only) | 4/4 wells read as recessed (13-34 inset, rim 0.22). All 4 put a DARK `border` (rgba(0,0,0,.9)/#010101/#050403) = occlusion line, NEVER the light border that makes glass "stick out". Not a RED. | holds, no patch |
 
 Eval verification commands (all pass locally):
 ```
@@ -168,7 +173,12 @@ wc -c < skills/skeuomorphic-forge/SKILL.md   # -> 29021 (< 40960 cap)
 - Metrics are self-reported by agents BUT each cites the exact code line -> code-verifiable.
 - ~3 agent glitches over ~25 launches (0 tool calls, garbage preamble) were discarded.
 - Arm A (no-skill control) was contaminated (agents found the skill via cwd) -> no clean baseline.
-- §16.13 (border-on-well) and §16.7 (overlays) not yet tested (predicted to hold).
+- §16.13 (border-on-well) and §16.7 (overlays) now MEASURED (arm B, 4/4, no cue, natural CRT-in-metal
+  request) -> both HOLD, no patch (see §5). Nuance to keep visible: all 4 agents put a DARK `border:` on
+  the recess (literal divergence from §16.13 `border:none`), but it reads as an occlusion line, never the
+  "glass sticks out" failure a LIGHT border causes -> deliberately NOT patched (would be an invented fix
+  for a non-problem). §16.7 held richly (4-6 overlays each); agent-1 implemented the 270deg+125deg pair
+  verbatim. These stay qualitative -> judged on the code, no grep checker added.
 - Optional diagnostic script `hd_audit.py` (audits the 21 assets vs floors) lives in the session
   scratchpad, NOT in the repo. Not needed to continue; the repo guard is `check_shadow_floors.py`.
 
