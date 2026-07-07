@@ -8,11 +8,12 @@ BELOW the §16 floor, so agents copied the low value:
   - §16.5: screw heads need >= 7 shadow layers (they sit ON the surface and need
     pronounced depth); the golden shipped a 5-layer stack.
 
-This guard fails CI if the golden drops either below its floor, so a future edit
-cannot silently reintroduce a failure mode that survived 5 manual audits.
+This guard fails CI if any copy-source (00-golden or references/14, the dedicated
+recess/well reference) drops a recess rim / screw stack below its floor, so a future
+edit cannot silently reintroduce a failure mode that survived 5 manual audits.
 
 Usage:
-  python3 scripts/check_shadow_floors.py            # check golden, exit 1 on failure
+  python3 scripts/check_shadow_floors.py            # check copy-sources, exit 1 on failure
   python3 scripts/check_shadow_floors.py --selftest # verify the detector logic itself
 """
 
@@ -21,6 +22,12 @@ import sys
 from pathlib import Path
 
 GOLDEN = Path(__file__).parent.parent / "references" / "00-golden-examples.md"
+# references/14 is the dedicated recess/well copy-source; agents route here for
+# gauges/meters/wells, so it must also carry the §16.2 machined rim. Proven by
+# arm-B eval: a trough built from its old rimless 4-zone model shipped a flat top
+# lip (outer 0.06 only, no inset rim) -- the same contradiction fixed in 00-golden.
+REFS14 = Path(__file__).parent.parent / "references" / "14-metal-recess-wells.md"
+SOURCES = (GOLDEN, REFS14)
 RIM_FLOOR = 0.20
 SCREW_MIN_LAYERS = 7
 RECESS_RE = re.compile(r"well|display|recess", re.I)
@@ -104,7 +111,9 @@ def check(text: str):
     failures = []
     checked = 0
     for context, code in parse_blocks(text):
-        if RECESS_RE.search(context) and is_recess(code):
+        # A copyable recess stack has an actual box-shadow declaration; skip prose /
+        # ASCII-diagram blocks that merely mention "inset" in loose annotations.
+        if RECESS_RE.search(context) and is_recess(code) and BOXSHADOW_RE.search(code):
             checked += 1
             if not block_has_rim(code):
                 failures.append((context.strip(), f"recess rim < {RIM_FLOOR} (16.2)"))
@@ -136,6 +145,13 @@ def selftest() -> int:
     )
     assert max_boxshadow_layers(screw7) == 7, "must count 7 layers"
     assert max_boxshadow_layers(screw5) == 5, "must count 5 layers"
+
+    # A schematic/diagram block (insets in annotations, no box-shadow declaration)
+    # must NOT be judged as a copyable recess stack (regression: §14.2 anatomy).
+    diagram = "## Metal Recess\n```\n<- inset 0 4px rgba(0,0,0,0.9)\n<- inset 0 -1px rgba(0,0,0,0.5)\n<- inset 3px 0 rgba(0,0,0,0.5)\n```\n"
+    checked, _ = check(diagram)
+    assert checked == 0, "a diagram block without a box-shadow decl must be skipped"
+
     print("selftest OK")
     return 0
 
@@ -143,16 +159,27 @@ def selftest() -> int:
 def main() -> int:
     if "--selftest" in sys.argv:
         return selftest()
-    if not GOLDEN.exists():
-        print(f"::error::golden file not found: {GOLDEN}")
+    total_checked = 0
+    all_failures = []
+    for src in SOURCES:
+        if not src.exists():
+            print(f"::error::source file not found: {src}")
+            return 1
+        checked, failures = check(src.read_text(encoding="utf-8", errors="replace"))
+        total_checked += checked
+        all_failures += [(src.name, ctx, reason) for ctx, reason in failures]
+    if all_failures:
+        for name, ctx, reason in all_failures:
+            print(
+                f"::error::shadow floor violated ({reason}) in {name} near: {ctx[:120]}"
+            )
+        print(
+            f"FAIL: {len(all_failures)}/{total_checked} recess/screw stacks below a shadow floor"
+        )
         return 1
-    checked, failures = check(GOLDEN.read_text(encoding="utf-8", errors="replace"))
-    if failures:
-        for ctx, reason in failures:
-            print(f"::error::shadow floor violated ({reason}) near: {ctx[:120]}")
-        print(f"FAIL: {len(failures)}/{checked} golden stacks below a shadow floor")
-        return 1
-    print(f"OK: {checked} golden stacks all meet their shadow floor")
+    print(
+        f"OK: {total_checked} stacks across {len(SOURCES)} sources all meet their shadow floor"
+    )
     return 0
 
 
