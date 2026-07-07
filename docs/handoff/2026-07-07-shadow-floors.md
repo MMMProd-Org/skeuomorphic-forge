@@ -28,9 +28,12 @@ user artifact (a keypad — skill guides it well), enriched it with a **Thin Led
 `Mustang_DSP`**: 88 recessed wells retrofitted (audit found ~94/96 flat), typecheck green + owner
 approved the 0.22 rim visually.
 
-**Immediate state: TWO validated branches, NOTHING pushed, waiting for the user's GO to open PRs** —
-skill `continue/shadow-floors` (7 commits) and `Mustang_DSP` `fix/rim-floor-wells-16-2` (5 commits).
-See §1 ACTIVE. CI/typecheck green on both.
+**State (updated 2026-07-07): user gave GO — BOTH PRs are OPEN.** Skill PR
+`MMMProd-Org/skeuomorphic-forge#27` (`continue/shadow-floors`) and production PR
+`MMMProd-Org/Mustang_DSP#1718` (`fix/rim-floor-wells-16-2`, CI green). After opening, a THIRD §16.2
+contradiction was found + fixed at a second copy-source (`references/14`) — proven by arm B,
+re-proven, locked by the checker (commit `a286f15`, on PR #27). NOT merged — opening only.
+See §1 + §5. CI/typecheck green on both.
 
 ---
 
@@ -68,14 +71,21 @@ See §1 ACTIVE. CI/typecheck green on both.
       `Mustang_DSP`, branch `fix/rim-floor-wells-16-2` (5 commits), doc `docs/RIM-FLOOR-16.2-AUDIT.md`.
       Nothing pushed. (This IS the "real user output" item that used to be in FUTURE — now done, and it
       confirmed the §16.2 diagnosis at scale: the flat-well bug was everywhere in real code.)
+- [x] **Extended the §16.2 fix to `references/14` (a SECOND copy-source).** After the PRs opened,
+      measured arm B (no cue) on gauge/well/trough requests: 1/4 reproduced the flat-well RED — a
+      trough built from `references/14`'s rimless 4-zone model shipped only the outer 0.06 lip, no
+      inset machined rim. Patched `references/14` (ZONE 0 machined rim added to the 4→5-zone anatomy
+      + every §16.2-governed well example) + extended `check_shadow_floors.py` to guard it (skips the
+      ASCII schematic). Re-proven arm B 3/3 (trough+channel+gauge ship inset 0.22), checker green
+      (OK 8 stacks / 2 sources). commit `a286f15` on `continue/shadow-floors` (PR #27).
 
-### ACTIVE (now — the decision point)
-**Two branches are validated and PR-ready. NOTHING pushed. Open PRs only on explicit user GO.**
-- [ ] PR #1 — the skill: repo `skeuomorphic-forge`, branch `continue/shadow-floors` (7 commits, off
-      `fix/rim-floor-visibility`). `gh pr create --base main --head continue/shadow-floors`.
-- [ ] PR #2 — real code: repo `Mustang_DSP`, branch `fix/rim-floor-wells-16-2` (5 commits, validated:
-      typecheck + visual). Run `gh pr create --base main --head fix/rim-floor-wells-16-2` FROM the
-      Mustang_DSP worktree. It is the user's PRODUCTION repo — treat with care.
+### ACTIVE (now)
+**Both PRs are OPEN (user gave GO 2026-07-07). Nothing left blocking.**
+- [x] PR #1 — skill: `MMMProd-Org/skeuomorphic-forge#27` (`continue/shadow-floors`). Now includes the
+      `references/14` fix (`a286f15`). Pushing more commits to the branch auto-updates the PR.
+- [x] PR #2 — production: `MMMProd-Org/Mustang_DSP#1718` (`fix/rim-floor-wells-16-2`, CI SUCCESS). A
+      `style:` commit (`0c6b2e98`) prettier-cleaned 3 touched files (2 carried pre-existing debt on
+      main) to pass the repo's pre-push gate. NOT merged — opening only, per the GO.
 
 ### FUTURE (options, in ROI order — all optional, low priority)
 - [ ] `Mustang_DSP`: the ~6 skipped wells are correct (rimmed by another means / not wells) — nothing
@@ -172,6 +182,8 @@ heading, update BOTH the golden file AND the CI list AND the SKILL.md citation t
 | §16.13 no border on well | no VISUAL failure (literal divergence only) | 4/4 wells read as recessed (13-34 inset, rim 0.22). All 4 put a DARK `border` (rgba(0,0,0,.9)/#010101/#050403) = occlusion line, NEVER the light border that makes glass "stick out". Not a RED. | holds, no patch |
 | segmented keypad / multi-state button (REAL user artifact) | no (skill routes to `refs/11 §43 Mechanical Key`) | audited user's `RetainedOemZoneControl` (thin ledge, 3-layer keys — user's esthetic after ~20 iters) + arm B 3/3 on the same pattern (no cue): every agent shipped a conformant keypad (keys 9/10/14 layers >= C6's 5, recessed well rim 0.22, rest/hover/pressed/selected/focus states, label = color+text-shadow, ZERO background-clip:text) | skill guides well, no patch |
 
+| §16.2 rim @ `references/14` (2nd copy-source) | YES (absence: rimless 4-zone model, outer 0.06 only) | pre-patch arm B 1/4 trough shipped flat top (no inset rim); post-patch arm B **3/3 inset 0.22 (no cue)**; checker locks it (OK 8/2 sources) | fixed+locked (`a286f15`) |
+
 Eval verification commands (all pass locally):
 ```
 cd <worktree>
@@ -249,9 +261,10 @@ worktree — `gh pr create --base main --head fix/rim-floor-visibility` — but 
 
 ## 9. NEXT ACTION for the continuing LLM
 
-State: skill work DONE (7 commits, `continue/shadow-floors`); Mustang_DSP §16.2 rim retrofit DONE +
-validated (5 commits, `fix/rim-floor-wells-16-2`, typecheck green + owner visual OK). Nothing pushed.
-Two PRs pending an explicit user GO (see §1 ACTIVE).
+State (2026-07-07): user gave GO. BOTH PRs OPEN — skill `skeuomorphic-forge#27` (now +`a286f15`
+`references/14` fix) and production `Mustang_DSP#1718` (CI green, +`0c6b2e98` prettier). A third §16.2
+contradiction (`references/14`, 2nd copy-source) was found→fixed→re-proven→locked after opening. NOT
+merged — opening only. Nothing left blocking; remaining items are §1 FUTURE (optional).
 
 1. Read this file fully AND `Mustang_DSP` `docs/RIM-FLOOR-16.2-AUDIT.md`. Re-run the §5 verification
    (skill) → confirm green. The Mustang_DSP branch is already typecheck-green + owner-visually-approved.
