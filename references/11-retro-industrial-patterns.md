@@ -1866,9 +1866,12 @@ Reconciles with C6 (`buttons >= 5 layers`): here the depth lives in the **shared
   border-radius: 3px;
   background: linear-gradient(180deg, hsl(25 6% 12%), hsl(25 5% 9%));
   box-shadow:
+    inset 0 1px 0 rgba(255, 250, 240, 0.22), /* warm machined rim — FRONTMOST (1er layer) so it stays visible; §16.2 floor 0.20 */
     inset 0 2px 3px hsl(0 0% 0% / 0.55), /* recess top gorge */
-    inset 0 1px 1px hsl(0 0% 0% / 0.4),
-    0 1px 0 hsl(35 10% 24% / 0.15); /* warm lip catch */
+    inset 0 1px 1px hsl(0 0% 0% / 0.4), /* upper wall */
+    inset 2px 0 2px hsl(0 0% 0% / 0.3), /* left wall */
+    inset -2px 0 2px hsl(0 0% 0% / 0.3), /* right wall */
+    inset 0 -2px 3px hsl(0 0% 0% / 0.45); /* bottom catch — the well carries the depth (>= 5 inset) */
 }
 ```
 
@@ -1925,6 +1928,8 @@ Reconciles with C6 (`buttons >= 5 layers`): here the depth lives in the **shared
   text-shadow: 0 0 6px var(--accent-glow), 0 1px 0 rgba(0, 0, 0, 0.6);
 }
 ```
+
+**A11y (obligatoire pour un keypad copiable).** Le keycap doit porter `role="radio"` dans un conteneur `role="radiogroup"` (ou etre un `<input type="radio">` natif) pour que `aria-checked` soit valide — sinon ARIA invalide. Les etats non montres ici se reprennent du standard (SKILL.md « Etats interactifs ») et restent obligatoires : `:focus-visible { outline: 2px solid hsl(35 100% 60%); outline-offset: 2px; }` (a11y clavier, NON negociable), `:disabled / [aria-disabled="true"] { opacity: 0.5; filter: saturate(0.3); pointer-events: none; }`, hover = highlight +0.05.
 
 **TRAP — label doubling.** Do NOT render the keycap label with `background-clip: text` / `-webkit-background-clip: text` (the chrome-text trick in `08-metal-effects.md` §24.4). On these small stacked keys it renders a DOUBLED/ghosted label. Use a solid `color` + `text-shadow` (silkscreen/engraved, or lit phosphor when selected). Reserve `background-clip: text` for large isolated display headings, never for keypad labels.
 

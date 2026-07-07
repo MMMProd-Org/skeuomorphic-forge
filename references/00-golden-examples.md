@@ -83,6 +83,8 @@ From `assets/codepen-deep-screen.html`:
 
 ```css
 box-shadow:
+  /* Warm machined rim — FRONTMOST (1st layer) so the top inner lip catches light and is not occluded; §16.2 floor 0.20, inset => C1-compliant (no colored non-inset shadow) */
+  inset 0 1px 0 rgba(255, 250, 240, 0.22),
   /* Micro borders — crisp edge definition */
   inset 0 1px 0 #000,
   inset 0 2px 0 #000,
@@ -111,8 +113,7 @@ box-shadow:
   inset -10px 10px 18px rgba(0, 0, 0, 0.9),
   inset 10px -10px 18px rgba(0, 0, 0, 0.9),
   inset -10px -10px 18px rgba(0, 0, 0, 0.9),
-  /* External — rim light and base shadow */ 0 1px 0 rgba(255, 250, 240, 0.22), /* warm machined lip — RIM floor >=0.20 (§16.2); was 0.05 (invisible) */
-  0 2px 0 rgba(255, 255, 255, 0.02),
+  /* External — base shadow (rim moved to a frontmost inset lip above, per C1) */ 0 2px 0 rgba(255, 255, 255, 0.02),
   0 -1px 0 rgba(0, 0, 0, 0.9),
   0 -2px 4px rgba(0, 0, 0, 0.6),
   0 6px 24px rgba(0, 0, 0, 0.6),

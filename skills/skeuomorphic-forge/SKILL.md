@@ -219,7 +219,7 @@ focusVisible: { outline: '2px solid hsl(35 100% 60%)', outlineOffset: '2px' }
 
 ### Metal Recesses / Wells
 
-Chaque recess necessite les 4 zones : top attack, murs lateraux, bottom catch, **levre superieure (RIM)**. La levre superieure DOIT rester visible : derniere couche `inset 0 1px 0 rgba(255,250,240,0.20-0.25)` (plancher 0.20, §16.2 — ne PAS descendre aux valeurs d'edge catch 0.03-0.08). En dessous = rim invisible = well qui parait plat (echec #1 recurrent).
+Chaque recess necessite les 4 zones : top attack, murs lateraux, bottom catch, **levre superieure (RIM)**. La levre superieure DOIT rester visible : `inset 0 1px 0 rgba(255,250,240,0.22)` (plancher 0.20, plage 0.20-0.25, §16.2 — ne PAS descendre aux valeurs d'edge catch 0.03-0.08). **PLACEMENT** : ce rim inset doit etre le **PREMIER** layer du `box-shadow` (frontmost) — en CSS le premier layer peint AU-DESSUS, donc un rim ajoute en DERNIER passe DERRIERE les insets sombres = occlus = well plat (le defaut #1 retrouve en prod). En dessous du plancher OU occlus = rim invisible = well qui parait plat (echec #1 recurrent).
 
 | Composant | Min couches inset | Background |
 |---|---|---|
