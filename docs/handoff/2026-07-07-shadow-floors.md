@@ -39,6 +39,13 @@ Nothing is pushed. CI reproduced locally is green.
 - [x] Generalize §16.13 (no border on display wells) + §16.7 (2 screen overlays) — measured arm B 4/4
       (natural CRT-in-metal request, no cue). BOTH HOLD, no patch. Work done on branch
       `continue/shadow-floors` (off `fix/rim-floor-visibility`). See §5 for the numbers.
+- [x] Tested against a REAL user artifact (not a proxy): `Mustang_DSP` `RetainedOemZoneControl.tsx`
+      (a segmented 4-state keypad the user said took ~20 iterations). Audited it + measured arm B 3/3
+      on the same "segmented multi-state keypad" pattern (no cue). Skill guides it WELL — no RED, no
+      patch. The user's 20 iterations were an ESTHETIC choice (thin keycap-ledge, 3 layers, dropped
+      background-clip:text), not a skill defect: the skill routes to `references/11 §43 Mechanical Key`
+      and every agent shipped a conformant keypad (>=9 layers, well rim 0.22, full states, zero
+      clip:text) first try. See §5.
 - [x] Keep the eval harness as the non-regression method (the thing 5 audits lacked).
 
 ### ACTIVE (now — the decision point)
@@ -139,6 +146,7 @@ heading, update BOTH the golden file AND the CI list AND the SKILL.md citation t
 | §16.15 light-bar incident | no | 4/4 (premium prompt, no light requested -> still sourced) | holds, no patch |
 | §16.7 screen overlays | no (rule lives in §16, agents read it) | 4/4 (glass reflection 125deg + phosphor emission; agent-1 exact 270deg content-depth + 125deg reflection opposed) | holds, no patch |
 | §16.13 no border on well | no VISUAL failure (literal divergence only) | 4/4 wells read as recessed (13-34 inset, rim 0.22). All 4 put a DARK `border` (rgba(0,0,0,.9)/#010101/#050403) = occlusion line, NEVER the light border that makes glass "stick out". Not a RED. | holds, no patch |
+| segmented keypad / multi-state button (REAL user artifact) | no (skill routes to `refs/11 §43 Mechanical Key`) | audited user's `RetainedOemZoneControl` (thin ledge, 3-layer keys — user's esthetic after ~20 iters) + arm B 3/3 on the same pattern (no cue): every agent shipped a conformant keypad (keys 9/10/14 layers >= C6's 5, recessed well rim 0.22, rest/hover/pressed/selected/focus states, label = color+text-shadow, ZERO background-clip:text) | skill guides well, no patch |
 
 Eval verification commands (all pass locally):
 ```
@@ -168,8 +176,14 @@ wc -c < skills/skeuomorphic-forge/SKILL.md   # -> 29021 (< 40960 cap)
 
 ## 7. CAVEATS / LIMITS (integrity — keep these visible)
 
-- All measured on **sub-agent proxies**, never a real user output. They converge with the user's own
-  §16 (7 feedback iterations) but remain proxies. A real user artifact would strengthen everything.
+- Most measured on **sub-agent proxies**, which converge with the user's own §16 (7 feedback iterations)
+  but remain proxies. UPDATE: we finally tested a REAL user artifact — `Mustang_DSP`
+  `RetainedOemZoneControl.tsx` (segmented keypad, ~20 iterations). The skill guides the pattern well
+  (arm B 3/3, no RED). The one real gap is DIRECTIONAL not a defect: the skill's natural output is a
+  RICH bombe keycap (9-14 layers); the user's finished taste was a THIN ledge keycap (3 layers, flat
+  press, no background-clip:text). That's an optional ENRICHMENT (document a "thin ledge keypad"
+  variant of §43), NOT a contradiction to patch — do not add a rule without a proven RED (5 audits died
+  that way).
 - Metrics are self-reported by agents BUT each cites the exact code line -> code-verifiable.
 - ~3 agent glitches over ~25 launches (0 tool calls, garbage preamble) were discarded.
 - Arm A (no-skill control) was contaminated (agents found the skill via cwd) -> no clean baseline.
