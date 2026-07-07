@@ -39,7 +39,7 @@ boxShadow: `
 /* Light goes on the KNOB that sits inside, not on the rail. */
 ```
 
-From production code (not shipped with this skill) (display well — 9 layers):
+From production code (not shipped with this skill) (display well — 10 layers, incl. mandatory top rim >=0.20):
 
 ```javascript
 boxShadow: `
@@ -50,6 +50,7 @@ boxShadow: `
   inset -4px 0 12px rgba(0,0,0,0.6),       /* S: right gorge wall */
   inset 0 0 40px rgba(0,5,15,0.3),         /* S: ambient inset well */
   inset 0 0 30px rgba(255,180,60,0.02),    /* L: warm glow trapped in well */
+  inset 0 1px 0 rgba(255,250,240,0.22),    /* L: TOP machined-lip RIM — keep >=0.20 (§16.2). THIS is what makes the well read as finished, not flat. NEVER lower to edge-catch (0.03-0.08) values. */
   0 0 0 1px rgba(0,0,0,0.95),              /* S: rim line */
   0 1px 0 rgba(255,255,255,0.03)           /* L: bottom catch line */
 `;
@@ -82,6 +83,8 @@ From `assets/codepen-deep-screen.html`:
 
 ```css
 box-shadow:
+  /* Warm machined rim — FRONTMOST (1st layer) so the top inner lip catches light and is not occluded; §16.2 floor 0.20, inset => C1-compliant (no colored non-inset shadow) */
+  inset 0 1px 0 rgba(255, 250, 240, 0.22),
   /* Micro borders — crisp edge definition */
   inset 0 1px 0 #000,
   inset 0 2px 0 #000,
@@ -110,8 +113,7 @@ box-shadow:
   inset -10px 10px 18px rgba(0, 0, 0, 0.9),
   inset 10px -10px 18px rgba(0, 0, 0, 0.9),
   inset -10px -10px 18px rgba(0, 0, 0, 0.9),
-  /* External — rim light and base shadow */ 0 1px 0 rgba(255, 255, 255, 0.05),
-  0 2px 0 rgba(255, 255, 255, 0.02),
+  /* External — base shadow (rim moved to a frontmost inset lip above, per C1) */ 0 2px 0 rgba(255, 255, 255, 0.02),
   0 -1px 0 rgba(0, 0, 0, 0.9),
   0 -2px 4px rgba(0, 0, 0, 0.6),
   0 6px 24px rgba(0, 0, 0, 0.6),
@@ -259,7 +261,7 @@ const bottomRimStyle: React.CSSProperties = {
 
 ---
 
-## 4. SCREW HEAD (5 layers + radial gradient)
+## 4. SCREW HEAD (7 layers + radial gradient)
 
 From production code (not shipped with this skill):
 
@@ -276,6 +278,8 @@ const screwStyle: React.CSSProperties = {
     inset 0 -0.5px 0 rgba(255,255,255,0.2), /* L: bottom edge catch */
     0 1px 1px rgba(0,0,0,0.9),              /* S: close cast */
     0 2px 3px rgba(0,0,0,0.6),              /* S: mid cast */
+    0 3px 5px rgba(0,0,0,0.45),             /* S: far cast (§16.5: screws sit ON the surface, 7-layer min for pronounced depth) */
+    0 5px 9px rgba(0,0,0,0.3),              /* S: ambient drop (§16.5) */
     0 0 0 0.5px rgba(0,0,0,0.8)             /* S: rim line */
   `,
   zIndex: 20,

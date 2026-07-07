@@ -109,7 +109,7 @@ Dire seulement "sources consultees" sans commandes exactes ni asset nomme est in
 
 **U3 Construction (HIGH):** Objet physique nomme explicitement. 4 couches : chassis + profondeur + eclairage + detail. Ordre d'assemblage respecte (C8).
 
-**U4 Hardware (HIGH):** Vis aux coins avec radial-gradient sphere + 5 couches d'ombre + slot torx/phillips. Vis sur METAL uniquement, jamais sur verre/ecran.
+**U4 Hardware (HIGH):** Vis aux coins avec radial-gradient sphere + 7 couches d'ombre + slot torx/phillips. Vis sur METAL uniquement, jamais sur verre/ecran.
 
 **U5 Interaction States (HIGH):** hover (lift + expand shadow), active (depress + compress), disabled (opacity 0.5 + desaturate), focus-visible (outline 2px). Le shadow stack CHANGE entre les etats.
 
@@ -192,8 +192,9 @@ Les ombres portees restent NOIRES `rgba(0,0,0,...)` quel que soit le theme.
 
 | But | Couleur | Opacite |
 |---|---|---|
-| Edge catch | `rgba(255,255,255,...)` | 0.03-0.08 |
+| Edge catch (surface plate uniquement) | `rgba(255,255,255,...)` | 0.03-0.08 |
 | Top bevel | `rgba(255,255,255,...)` | 0.08-0.15 |
+| **Levre / RIM d'un recess ou well (bord sup.)** | `rgba(255,250,240,...)` | **0.20-0.25 — plancher 0.20 (§16.2), JAMAIS 0.03-0.15** |
 | Specular hotspot | `rgba(255,240,220,...)` | 0.15-0.30 |
 | Active glow | `rgba(255,180,60,...)` | 0.10-0.40 |
 | CRT/LED emission | `hsl(35 100% 60%)` | Full |
@@ -218,7 +219,7 @@ focusVisible: { outline: '2px solid hsl(35 100% 60%)', outlineOffset: '2px' }
 
 ### Metal Recesses / Wells
 
-Chaque recess necessite les 4 zones : top attack, murs lateraux, bottom catch, levre exterieure.
+Chaque recess necessite les 4 zones : top attack, murs lateraux, bottom catch, **levre superieure (RIM)**. La levre superieure DOIT rester visible : `inset 0 1px 0 rgba(255,250,240,0.22)` (plancher 0.20, plage 0.20-0.25, §16.2 — ne PAS descendre aux valeurs d'edge catch 0.03-0.08). **PLACEMENT** : ce rim inset doit etre le **PREMIER** layer du `box-shadow` (frontmost) — en CSS le premier layer peint AU-DESSUS, donc un rim ajoute en DERNIER passe DERRIERE les insets sombres = occlus = well plat (le defaut #1 retrouve en prod). En dessous du plancher OU occlus = rim invisible = well qui parait plat (echec #1 recurrent).
 
 | Composant | Min couches inset | Background |
 |---|---|---|
@@ -232,7 +233,7 @@ Chaque recess necessite les 4 zones : top attack, murs lateraux, bottom catch, l
 
 ### Rim Light
 
-Shadow stack construit D'ABORD (5+ couches), PUIS rim light par-dessus. Bord superieur 2-4x plus lumineux que le bas. Au moins UN pseudo-element overlay (`<span>` absolu ou Tailwind `before:` / `after:`) avec `radial-gradient` pour hotspot concentre. Rim light opacity max 0.25 (specular hotspots et active glows peuvent aller plus haut — voir tableau Eclairage). `pointerEvents: "none"` sur les overlays.
+Shadow stack construit D'ABORD (5+ couches), PUIS rim light par-dessus. Bord superieur 2-4x plus lumineux que le bas. Au moins UN pseudo-element overlay (`<span>` absolu ou Tailwind `before:` / `after:`) avec `radial-gradient` pour hotspot concentre. Rim light opacity de la levre superieure d'un recess/well : **0.20-0.25, plancher 0.20 NON NEGOCIABLE** (en dessous = rim invisible = well qui parait plat — echec #1 recurrent, cf. `references/16-benchmark-lessons.md` §16.2). Ne PAS confondre avec l'edge catch d'une surface plate (0.03-0.08). Specular hotspots et active glows peuvent aller plus haut — voir tableau Eclairage. `pointerEvents: "none"` sur les overlays.
 
 **INTERDIT** : `border: 1px solid rgba(255,255,255,0.1)` comme "rim light" (border uniforme = cadre photo). `box-shadow: 0 0 20px rgba(255,255,255,0.1)` seul (glow uniforme = neon).
 
@@ -255,7 +256,7 @@ Tous les patterns prets-a-l'emploi (bouton rest/hover/active, card avec rim ligh
 | Bouton complet Rest/Hover/Active | `## 2. COMPLETE BUTTON — Rest / Hover / Active` |
 | Industrial Circuit Relay Button | `### Industrial Circuit Relay Button` |
 | Card avec Rim Light | `## 3. COMPLETE CARD WITH RIM LIGHT` |
-| Tete de vis (5 couches + slot torx) | `## 4. SCREW HEAD (5 layers + radial gradient)` |
+| Tete de vis (7 couches + slot torx) | `## 4. SCREW HEAD (7 layers + radial gradient)` |
 | Phosphor / CRT Text Glow (amber, rouge) | `## 5. PHOSPHOR / CRT TEXT GLOW` |
 | Silkscreen Label | `## 6. SILKSCREEN LABEL` |
 | Metal brosse / Sphere knob / Chrome / Cuir / Bois | `## 7. MATERIAL SURFACE GRADIENTS` |
@@ -273,6 +274,7 @@ Lire le minimum utile, mais le lire vraiment. Pour chaque demande, suivre la lig
 | Demande | Lire | Search obligatoire | Asset HTML a inspecter |
 |---|---|---|---|
 | Button / CTA / active press | `00-golden-examples.md` sections 1-2 + 17 matrix | `"button shadow" --code-only`, `"pressed active state"` | `power-button.html`, `color-mix-buttons.html`, `tile-buttons-divs.html` |
+| Segmented keypad / multi-state selector (2-4 keys, one well) | `00` sections 1-2 + `11-retro-industrial-patterns.md` §43 (+ thin-ledge variant) | `"pressed active state"`, `"keypad key selected"` | `rimlight-toggle-switch.html`, `color-mix-buttons.html` |
 | Toggle / rocker / switch | `00` + `02-hardware-animation-neumorphism.md` | `"switch recess"`, `"rocker active shadow"` | `skeuomorphic-switch.html`, `rimlight-toggle-switch.html`, `rocker-3d-switch.html` |
 | Gauge / VU / meter | `00` + `14-metal-recess-wells.md` + `16` | `"gauge well"`, `"needle shadow"`, `"metal recess"` | `tube-compressor-vu.html`, `credit-score-gauge.html`, `horizontal-thermometer.html` |
 | CRT / LCD / phosphor display | `00` + `07-glass-effects.md` + `11-retro-industrial-patterns.md` + `16` | `"CRT display"`, `"glass reflection"`, `"phosphor glow"` | `codepen-deep-screen.html`, `deep-screen-phosphor.html`, `lcd-db-display.html` |
@@ -317,7 +319,7 @@ Pour les autres themes (cool steel, deep purple, military, vintage audio, CRT te
 | 2-3 couches box-shadow | 5-15 couches, blur gradue |
 | Vis sur surface plate | Profondeur D'ABORD, vis par-dessus |
 | Vis sur verre/ecran | Vis sur METAL uniquement |
-| Vis cercle plat 1 inset | Radial gradient sphere + 5 couches + slot torx |
+| Vis cercle plat 1 inset | Radial gradient sphere + 7 couches + slot torx |
 | Carte qui resize avec contenu | width+height explicites, frame fixe |
 | Recess sans inner rim light | 1px warm border au bord, top plus lumineux |
 | 1-3 inset pour ecran | 12+ couches inset + inner rim light |

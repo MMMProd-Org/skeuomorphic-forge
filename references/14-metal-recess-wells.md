@@ -2,7 +2,7 @@
 
 > How to make elements look SUNK INTO metal — not sitting on a flat div.
 > This file exists because Claude always uses 2-3 inset shadows (too shallow).
-> **Minimum: 6 layers for any recess. 9+ for instrument wells.**
+> **Minimum: 6 layers for any recess. 10+ for instrument wells. Display/readout wells carry the §16.2 machined rim as the FRONTMOST inset layer (see §14.2 ZONE 0).**
 
 ---
 
@@ -16,12 +16,13 @@
 | No lateral shadows                          | No sense of wall thickness                            | `inset ±3px 0 6px rgba(0,0,0,0.5)` = left/right walls            |
 | Sharp edges on recess                       | Metal wells have radiused inner edges                 | `border-radius: 4-8px` on the well                               |
 | No outer lip highlight                      | No transition from surface to hole                    | `0 1px 0 rgba(255,255,255,0.06)` = outer catch at surface plane  |
+| No inner machined top-lip                   | Well reads FLAT on top — #1 recurring failure         | `inset 0 1px 0 rgba(255,250,240,0.22)` = warm machined rim, §16.2 floor 0.20 (NOT the 0.06 outer catch) |
 
 ---
 
 ## 14.2 — The 4-Zone Anatomy of a Metal Recess
 
-Every physical recess has 4 zones. EACH zone needs its own CSS treatment:
+Every physical recess has 5 zones (ZONE 0-4). EACH zone needs its own CSS treatment. The most-often-missed is **ZONE 0, the inner machined rim** (see below the diagram):
 
 ```
               SURFACE (parent element background)
@@ -42,15 +43,25 @@ Every physical recess has 4 zones. EACH zone needs its own CSS treatment:
               FLOOR (well background, MUCH darker)
 ```
 
+**ZONE 0 — the inner machined rim (frontmost, the #1 missing zone).** Before ZONE 1's dark
+top-attack, a real milled edge catches the overhead light as a thin warm line at the top INNER
+lip. It must be the FRONTMOST inset layer so the dark attack can't swallow it:
+`inset 0 1px 0 rgba(255,250,240,0.22)` — warm near-white, **§16.2 floor 0.20 (range 0.20-0.25),
+NON-NEGOTIABLE**. This is DISTINCT from ZONE 4's outer `0 1px 0 rgba(255,255,255,0.06)` surface
+catch (which sits OUTSIDE the hole). Omit the machined rim and the well reads flat on top — the
+#1 recurring skeuomorphic failure. Never drop it to edge-catch values (0.03-0.08).
+
 ---
 
-## 14.3 — Standard Recess (6 layers) — For small wells, input fields, status displays
+## 14.3 — Standard Recess (7 layers) — For small wells, input fields, status displays
 
 ```css
 .standard-recess {
   background: linear-gradient(180deg, #080808 0%, #0c0c0c 100%);
   border-radius: 6px;
   box-shadow:
+    /* ZONE 0: machined rim — frontmost warm inset lip, §16.2 floor 0.20 (the #1 missing layer) */
+    inset 0 1px 0 rgba(255, 250, 240, 0.22),
     /* ZONE 1: Top attack — light blocked by upper lip */
     inset 0 3px 6px rgba(0, 0, 0, 0.7),
     /* primary depth */ inset 0 1px 2px rgba(0, 0, 0, 0.5),
@@ -63,7 +74,7 @@ Every physical recess has 4 zones. EACH zone needs its own CSS treatment:
 
 ---
 
-## 14.4 — Deep Instrument Well (9 layers) — For gauges, displays, meters
+## 14.4 — Deep Instrument Well (10 layers) — For gauges, displays, meters
 
 ```css
 .instrument-well {
@@ -71,6 +82,8 @@ Every physical recess has 4 zones. EACH zone needs its own CSS treatment:
   border-radius: 8px;
   padding: 8px;
   box-shadow:
+    /* ZONE 0: machined rim — frontmost warm inset lip, §16.2 floor 0.20 (the #1 missing layer) */
+    inset 0 1px 0 rgba(255, 250, 240, 0.22),
     /* TOP ATTACK — progressive depth (3 layers) */
     inset 0 4px 10px rgba(0, 0, 0, 0.95),
     /* deep primary */ inset 0 2px 4px rgba(0, 0, 0, 0.8),
@@ -86,7 +99,7 @@ Every physical recess has 4 zones. EACH zone needs its own CSS treatment:
 
 ---
 
-## 14.5 — Ultra Deep Well (12 layers) — For CRT displays, deep bezels
+## 14.5 — Ultra Deep Well (13 layers) — For CRT displays, deep bezels
 
 Adapted from production code (ref 11, pattern 52):
 
@@ -96,6 +109,8 @@ Adapted from production code (ref 11, pattern 52):
   border-radius: 10px;
   padding: 4px 4px 14px; /* asymmetric bottom = physical depth zone */
   box-shadow:
+    /* ZONE 0: machined rim — frontmost warm inset lip, §16.2 floor 0.20 (the #1 missing layer) */
+    inset 0 1px 0 rgba(255, 250, 240, 0.22),
     /* TOP ATTACK — 3 progressive depths */
     inset 0 4px 10px rgba(0, 0, 0, 1),
     /* maximum depth */ inset 0 2px 4px rgba(0, 0, 0, 0.9),
@@ -126,6 +141,8 @@ A linear recess — deeper than it is wide. Used for dividers, tracks, slider ch
   border-radius: 4px; /* full radius = rounded channel */
   background: linear-gradient(180deg, #050505 0%, /* dark top (in shadow) */ #0a0a0a 40%, /* floor */ #0f0f0f 100% /* lighter bottom (catches light) */);
   box-shadow:
+    /* ZONE 0: machined rim — frontmost warm inset lip, §16.2 floor 0.20 (the #1 missing layer) */
+    inset 0 1px 0 rgba(255, 250, 240, 0.22),
     /* Gorge depth */
     inset 0 2px 4px rgba(0, 0, 0, 0.8),
     /* top lip shadow */ inset 0 1px 1px rgba(0, 0, 0, 0.6),
@@ -203,6 +220,8 @@ Combines deep well with screen characteristics (faint backlight bleed, dark glas
   border-radius: 6px;
   padding: 12px;
   box-shadow:
+    /* ZONE 0: machined rim — frontmost warm inset lip, §16.2 floor 0.20 (the #1 missing layer) */
+    inset 0 1px 0 rgba(255, 250, 240, 0.22),
     /* Recess depth */
     inset 0 3px 8px rgba(0, 0, 0, 0.9),
     inset 0 1px 2px rgba(0, 0, 0, 0.7),
@@ -227,6 +246,8 @@ When a display well has active content (LED, CRT, indicator), the light bleeds i
 /* Green LED well with bleed */
 .led-well-active {
   box-shadow:
+    /* ZONE 0: machined rim — frontmost warm inset lip, §16.2 floor 0.20 (the #1 missing layer) */
+    inset 0 1px 0 rgba(255, 250, 240, 0.22),
     /* Standard recess layers */
     inset 0 3px 6px rgba(0, 0, 0, 0.7),
     inset 0 1px 2px rgba(0, 0, 0, 0.5),
@@ -241,6 +262,8 @@ When a display well has active content (LED, CRT, indicator), the light bleeds i
 /* Amber CRT well with bleed */
 .crt-well-active {
   box-shadow:
+    /* ZONE 0: machined rim — frontmost warm inset lip, §16.2 floor 0.20 (the #1 missing layer) */
+    inset 0 1px 0 rgba(255, 250, 240, 0.22),
     inset 0 4px 10px rgba(0, 0, 0, 0.9),
     inset 0 2px 4px rgba(0, 0, 0, 0.7),
     inset 3px 0 6px rgba(0, 0, 0, 0.5),
@@ -273,7 +296,7 @@ When a display well has active content (LED, CRT, indicator), the light bleeds i
   inset: 0;
   border-radius: 8px;
   /* Top/left inner bevel = bright (angled surface catches light) */
-  border-top: 2px solid rgba(255, 255, 255, 0.08);
+  border-top: 2px solid rgba(255, 250, 240, 0.22); /* §16.2 machined rim: warm, floor 0.20 */
   border-left: 1px solid rgba(255, 255, 255, 0.04);
   /* Bottom/right inner bevel = dark (angled away from light) */
   border-bottom: 2px solid rgba(0, 0, 0, 0.5);
@@ -289,6 +312,8 @@ When a display well has active content (LED, CRT, indicator), the light bleeds i
   background: #060606;
   border-radius: 12px; /* larger radius = softer roll */
   box-shadow:
+    /* ZONE 0: machined rim — frontmost warm inset lip, §16.2 floor 0.20 (the #1 missing layer) */
+    inset 0 1px 0 rgba(255, 250, 240, 0.22),
     /* Soft rolled edge — multiple low-opacity layers */
     inset 0 1px 1px rgba(0, 0, 0, 0.3),
     inset 0 2px 3px rgba(0, 0, 0, 0.3),
@@ -315,3 +340,5 @@ When a display well has active content (LED, CRT, indicator), the light bleeds i
 | LCD display                | 8+         | radial `#0d1117` → `#020204`   | §14.8            |
 
 **RULE: Never use fewer layers than listed above. Claude's default 2-3 layers is ALWAYS wrong for skeuomorphic.**
+
+**RULE (§16.2): the FRONTMOST inset layer of every display/readout well is the machined rim `inset 0 1px 0 rgba(255,250,240,0.22)` (floor 0.20, range 0.20-0.25). The counts above are pre-rim minimums — add +1 for it. Without it the well reads flat on top (the #1 recurring failure). This is NOT the faint 0.06 outer surface catch.**

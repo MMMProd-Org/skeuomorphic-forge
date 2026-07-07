@@ -87,7 +87,7 @@ jobs:
             "## 2. COMPLETE BUTTON — Rest / Hover / Active"
             "### Industrial Circuit Relay Button"
             "## 3. COMPLETE CARD WITH RIM LIGHT"
-            "## 4. SCREW HEAD (5 layers + radial gradient)"
+            "## 4. SCREW HEAD (7 layers + radial gradient)"
             "## 5. PHOSPHOR / CRT TEXT GLOW"
             "## 6. SILKSCREEN LABEL"
             "## 7. MATERIAL SURFACE GRADIENTS"
@@ -181,6 +181,11 @@ jobs:
             fi
             echo "Filter '$key' OK"
           done
+
+      - name: Check shadow floors (16.2 rim + 16.5 screw, non-regression)
+        run: |
+          python3 scripts/check_shadow_floors.py --selftest
+          python3 scripts/check_shadow_floors.py
 
   prettier:
     name: Prettier Format Check

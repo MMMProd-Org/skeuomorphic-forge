@@ -1852,6 +1852,91 @@ A compact rectangular button with 14-layer shadow stack, 4px bottom border simul
 
 **Full working demo**: `assets/codepen-valider-button.html`
 
+### Variant: Thin Ledge Keypad (compact segmented / multi-state selector)
+
+The stack above is a **raised bombe key** — right for a single, large, isolated key. For a **compact segmented control** (a radiogroup of 2-4 keys sharing ONE recessed well: source selectors, mode/level pickers like `Off/Low/Med/High`, `Absent/Aftermarket/OEM`), that bombe stack is too tall and heavy. Use a **thin ledge keycap**: a flat machined face with a single SOLID thickness band, seated in a shared recessed well that carries the depth.
+
+Reconciles with C6 (`buttons >= 5 layers`): here the depth lives in the **shared well** (>= 5 inset layers) per C8 (depth first). Each keycap needs only 2-3 layers — a solid ledge band + a drop — because it is set INTO the well, not floating in isolation. Do NOT pad individual keycaps to 5 to satisfy a per-element count; count the well + keys as one system.
+
+**Recessed well behind the keys** (shallow control-panel recess — NOT a deep display well):
+
+```css
+.keypad-well {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, hsl(25 6% 12%), hsl(25 5% 9%));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 250, 240, 0.22), /* warm machined rim — FRONTMOST (1er layer) so it stays visible; §16.2 floor 0.20 */
+    inset 0 2px 3px hsl(0 0% 0% / 0.55), /* recess top gorge */
+    inset 0 1px 1px hsl(0 0% 0% / 0.4), /* upper wall */
+    inset 2px 0 2px hsl(0 0% 0% / 0.3), /* left wall */
+    inset -2px 0 2px hsl(0 0% 0% / 0.3), /* right wall */
+    inset 0 -2px 3px hsl(0 0% 0% / 0.45); /* bottom catch — the well carries the depth (>= 5 inset) */
+}
+```
+
+**Ledge keycap — REST.** The `inset 0 -6px` is a SOLID band (no blur) = the visible key thickness; the label rides `-4px` up on the lit face.
+
+```css
+.ledge-key {
+  min-height: 44px;
+  border: 2px solid hsl(25 6% 17%);
+  border-radius: 8px;
+  background: linear-gradient(135deg, hsl(25 9% 25%), hsl(25 7% 19%)); /* 135deg */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* drop into the well */
+}
+.ledge-key-inner {
+  border-radius: 6px;
+  padding: 10px 6px;
+  box-shadow:
+    inset 0 -6px hsl(25 5% 11%), /* SOLID thickness band = the ledge */
+    0 -2px hsl(25 9% 24%); /* top light line */
+}
+.ledge-key-label {
+  color: rgba(255, 240, 220, 0.9); /* warm, U6 */
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5); /* engraved */
+  transform: translate3d(0, -4px, 0); /* label rides up on the face */
+}
+```
+
+**PRESS — flat.** Shadows collapse, the label drops flush. Cheaper and more tactile than a big translate.
+
+```css
+.ledge-key:active,
+.ledge-key:active .ledge-key-inner {
+  box-shadow: none;
+}
+.ledge-key:active .ledge-key-label {
+  transform: translate3d(0, 0, 0);
+}
+```
+
+**SELECTED (persistent radio state) — seated flat + accent backlight, NOT raised.** The chosen key is LIT, not popped up.
+
+```css
+.ledge-key[aria-checked="true"] {
+  border-color: var(--accent-border); /* e.g. rgba(0,204,255,0.4) */
+  background: linear-gradient(135deg, hsl(25 6% 12%), hsl(25 5% 8%)); /* seated dark */
+  box-shadow: none;
+}
+.ledge-key[aria-checked="true"] .ledge-key-inner {
+  box-shadow: inset 0 0 12px var(--accent-glow);
+}
+.ledge-key[aria-checked="true"] .ledge-key-label {
+  transform: translate3d(0, 0, 0);
+  color: var(--accent-text);
+  text-shadow: 0 0 6px var(--accent-glow), 0 1px 0 rgba(0, 0, 0, 0.6);
+}
+```
+
+**A11y (obligatoire pour un keypad copiable).** Le keycap doit porter `role="radio"` dans un conteneur `role="radiogroup"` (ou etre un `<input type="radio">` natif) pour que `aria-checked` soit valide — sinon ARIA invalide. Les etats non montres ici se reprennent du standard (SKILL.md « Etats interactifs ») et restent obligatoires : `:focus-visible { outline: 2px solid hsl(35 100% 60%); outline-offset: 2px; }` (a11y clavier, NON negociable), `:disabled / [aria-disabled="true"] { opacity: 0.5; filter: saturate(0.3); pointer-events: none; }`, hover = highlight +0.05.
+
+**TRAP — label doubling.** Do NOT render the keycap label with `background-clip: text` / `-webkit-background-clip: text` (the chrome-text trick in `08-metal-effects.md` §24.4). On these small stacked keys it renders a DOUBLED/ghosted label. Use a solid `color` + `text-shadow` (silkscreen/engraved, or lit phosphor when selected). Reserve `background-clip: text` for large isolated display headings, never for keypad labels.
+
+**Key insight**: bombe (this section) vs ledge are two valid keypad idioms — pick bombe for a single big key, ledge for a dense segmented control. In the ledge idiom the WELL carries the recession and the SELECTED key reads by BACKLIGHT, not by height.
+
+**Real-world reference**: a production car-audio zone selector needed ~20 iterations to converge on exactly these choices (solid ledge band, flat press, backlit-not-raised selection, no `background-clip:text`). They are captured here so it is one-shot next time.
+
 ---
 
 ## 44. OEM EQ Curve Analyzer (Annotated Parametric Display)
