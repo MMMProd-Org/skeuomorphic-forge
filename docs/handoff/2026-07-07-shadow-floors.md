@@ -28,12 +28,17 @@ user artifact (a keypad — skill guides it well), enriched it with a **Thin Led
 `Mustang_DSP`**: 88 recessed wells retrofitted (audit found ~94/96 flat), typecheck green + owner
 approved the 0.22 rim visually.
 
-**State (updated 2026-07-07): user gave GO — BOTH PRs are OPEN.** Skill PR
-`MMMProd-Org/skeuomorphic-forge#27` (`continue/shadow-floors`) and production PR
-`MMMProd-Org/Mustang_DSP#1718` (`fix/rim-floor-wells-16-2`, CI green). After opening, a THIRD §16.2
-contradiction was found + fixed at a second copy-source (`references/14`) — proven by arm B,
-re-proven, locked by the checker (commit `a286f15`, on PR #27). NOT merged — opening only.
-See §1 + §5. CI/typecheck green on both.
+**State (updated 2026-07-07 ~06:20): BOTH PRs OPEN + GREEN + mergeable, NEITHER merged. The one open
+decision = the owner's MERGE GO.**
+- Skill PR `MMMProd-Org/skeuomorphic-forge#27` (`continue/shadow-floors`): OPEN, mergeable, all CI green.
+  Includes the `references/14` 2nd-copy-source fix (`a286f15`, arm-B proven + checker-locked).
+- Production PR `MMMProd-Org/Mustang_DSP#1718` (`fix/rim-floor-wells-16-2`): OPEN, Ready, **all CI gates
+  green**, mergeable, label `size-override`. It went through a full BOT-REVIEW round (codex/copilot/qodo)
+  that caught a REAL defect the visual approval missed — **27 wells had the warm rim appended LAST** in
+  the box-shadow, so it sat behind the dark top insets and was OCCLUDED (CSS paints the first layer on
+  top) → those wells still read flat. Fixed (rim moved frontmost in all 27, incl. 1 ternary the audit
+  first missed) + 2 diagonal `inset 1px 1px 0`→`inset 0 1px 0` + audit-doc reconcile; rebased onto
+  origin/main (was 14 behind) + `size-override` label. All 9 bot threads resolved. See §1 + §5.
 
 ---
 
@@ -78,22 +83,41 @@ See §1 + §5. CI/typecheck green on both.
       + every §16.2-governed well example) + extended `check_shadow_floors.py` to guard it (skips the
       ASCII schematic). Re-proven arm B 3/3 (trough+channel+gauge ship inset 0.22), checker green
       (OK 8 stacks / 2 sources). commit `a286f15` on `continue/shadow-floors` (PR #27).
+- [x] **Handled the `Mustang_DSP#1718` bot-review round (codex/copilot/qodo) — real bugs fixed.** They
+      caught a defect the owner visual pass missed: **27 wells had the warm rim appended LAST** in the
+      box-shadow, so it sat behind the dark top insets and was OCCLUDED (CSS paints the first layer on
+      top) → those wells still read flat (the visual sample had been the in-place-patched wells). Fixed
+      by moving the rim FRONTMOST in all 27 (deterministic ordering audit → 0 occluded; git proves a
+      pure reorder, no value changed), incl. 1 CONDITIONAL/ternary box-shadow the first audit regex
+      missed (found in the post-rebase bot re-review). +2 diagonal `inset 1px 1px 0`→`inset 0 1px 0`.
+      +reconciled audit doc §4 (VehicleSelectionSection & skeuomorphic-helpers were patched, not skips).
+      1 FP (CrtScreen rim already first) + 1 out-of-scope (4<5 layer depth) replied+resolved. All 9
+      threads resolved. Then **rebased onto origin/main** (was 14 behind, 0 conflicts) + applied the
+      maintainer **`size-override`** label → hygiene size/freshness gate cleared; the `types.ts`
+      File-Size failure vanished (main had split it 628→19). Commits `27612163`+`90dc32b0`+`a4b38505`.
+      ALL CI gates green, PR Ready + mergeable. Method used: `triaging-reviewer-comments` (classify
+      before edit, fix proven bugs only, reply-resolve FP/out-of-scope with evidence).
 
-### ACTIVE (now)
-**Both PRs are OPEN (user gave GO 2026-07-07). Nothing left blocking.**
-- [x] PR #1 — skill: `MMMProd-Org/skeuomorphic-forge#27` (`continue/shadow-floors`). Now includes the
-      `references/14` fix (`a286f15`). Pushing more commits to the branch auto-updates the PR.
-- [x] PR #2 — production: `MMMProd-Org/Mustang_DSP#1718` (`fix/rim-floor-wells-16-2`, CI SUCCESS). A
-      `style:` commit (`0c6b2e98`) prettier-cleaned 3 touched files (2 carried pre-existing debt on
-      main) to pass the repo's pre-push gate. NOT merged — opening only, per the GO.
+### ACTIVE (the ONLY open decision)
+**Both PRs are OPEN + GREEN + mergeable. NEITHER is merged. The one active goal = the owner's MERGE
+decision (explicit GO required, per discipline).**
+- [ ] MERGE — skill `MMMProd-Org/skeuomorphic-forge#27` (`continue/shadow-floors`, mergeable, all CI
+      green): `gh pr merge 27 --repo MMMProd-Org/skeuomorphic-forge --squash` on GO.
+- [ ] MERGE — production `MMMProd-Org/Mustang_DSP#1718` (`fix/rim-floor-wells-16-2`, Ready, all CI green,
+      `size-override`, mergeable): `gh pr merge 1718 --repo MMMProd-Org/Mustang_DSP --squash` on GO.
+      PRODUCTION — extra care. If it drifts >3 commits behind main, `git rebase origin/main` +
+      `git push --force-with-lease` first (hygiene freshness limit = 3). Every push re-triggers the bots.
 
 ### FUTURE (options, in ROI order — all optional, low priority)
 - [ ] `Mustang_DSP`: the ~6 skipped wells are correct (rimmed by another means / not wells) — nothing
       to do. A handful of the 88 could want per-context tuning if a spot ever reads too hot (0.22 is
       centralizable); owner approved as-is for now.
-- [ ] (nice-to-have) Extend `check_shadow_floors.py` beyond `00-golden-examples.md §1` to the other
-      recess copy-sources (`references/14`, assets HTML) — LOW ROI: the evals always copied stacks
-      from `00-golden`, never from an asset.
+- [x] DONE: extended `check_shadow_floors.py` to guard `references/14` too (`a286f15`). The assets-HTML
+      part remains un-guarded — LOW ROI (evals never copy from an asset); leave it.
+- [ ] (nice-to-have, `Mustang_DSP`) a follow-up DEPTH pass: qodo flagged some small CRT panels at 4
+      shadow layers (<5). Out of scope for the rim-visibility PR (resolved as such). Do only if the
+      owner wants deeper recesses — and measure first (is 4 actually too flat at that size?), never
+      blanket-add layers.
 - [ ] (nice-to-have) The skill's §16.13 qualitative floor (no light-border on wells) + §16.7 (2
       overlays) hold by measurement but have NO grep guard. Only add one if a regression ever appears.
 
@@ -261,19 +285,32 @@ worktree — `gh pr create --base main --head fix/rim-floor-visibility` — but 
 
 ## 9. NEXT ACTION for the continuing LLM
 
-State (2026-07-07): user gave GO. BOTH PRs OPEN — skill `skeuomorphic-forge#27` (now +`a286f15`
-`references/14` fix) and production `Mustang_DSP#1718` (CI green, +`0c6b2e98` prettier). A third §16.2
-contradiction (`references/14`, 2nd copy-source) was found→fixed→re-proven→locked after opening. NOT
-merged — opening only. Nothing left blocking; remaining items are §1 FUTURE (optional).
+State (2026-07-07 ~06:20): BOTH PRs OPEN + GREEN + mergeable, NEITHER merged. Skill
+`skeuomorphic-forge#27` (`continue/shadow-floors` @ `f9fe284`+handoff) and production `Mustang_DSP#1718`
+(`fix/rim-floor-wells-16-2` @ `a4b38505`+handoff, Ready, all CI gates green, `size-override`). #1718 went
+through a full bot-review round (paint-order fix on 27 wells + geometry + doc reconcile + rebase +
+override — §1 PASSIVE + §5). The ONE open decision = the owner's MERGE GO. Both worktrees clean.
 
-1. Read this file fully AND `Mustang_DSP` `docs/RIM-FLOOR-16.2-AUDIT.md`. Re-run the §5 verification
-   (skill) → confirm green. The Mustang_DSP branch is already typecheck-green + owner-visually-approved.
-2. Do NOT push or open any PR without a fresh explicit GO. When GO comes:
-   - Skill PR: `gh pr create --base main --head continue/shadow-floors` (body = summarize §4 + §5).
-   - Mustang_DSP PR: FROM the Mustang_DSP worktree, `gh pr create --base main --head
-     fix/rim-floor-wells-16-2` (body = summarize `docs/RIM-FLOOR-16.2-AUDIT.md`). PRODUCTION code — care.
-3. If instead continuing work: keep the non-negotiable method — measure a RED first (arm B, no cue),
-   patch ONLY on a proven contradiction, re-prove, lock. Never patch on a hypothesis. Work in YOUR OWN
-   isolated worktree (§8) — never the main checkout, never another LLM's worktree; `pwd` after every `cd`.
+MY worktrees (REUSE these; do NOT reuse another LLM's; run `pwd` after every `cd` — PWD drifts):
+- skill:   `/home/mmmpr/src/skeuomorphic-forge.wt/shadow-floors-cont` (branch `continue/shadow-floors`)
+- Mustang: `/home/mmmpr/src/Mustang_DSP.wt/rim-floor-wells` (branch `fix/rim-floor-wells-16-2`)
+Main checkouts (`/home/mmmpr/src/skeuomorphic-forge`, `/home/mmmpr/src/Mustang_DSP`) — leave alone.
 
-Open items are all in §1 FUTURE (optional, low priority). Nothing is blocking; the two branches are done.
+1. Read THIS file fully AND `Mustang_DSP` `docs/RIM-FLOOR-16.2-AUDIT.md`. Confirm both PRs still green:
+   `gh pr checks 27 --repo MMMProd-Org/skeuomorphic-forge` and
+   `gh pr checks 1718 --repo MMMProd-Org/Mustang_DSP`.
+2. Do NOTHING outward-facing (push / merge / PR) without a fresh explicit GO. When the MERGE GO comes:
+   - `gh pr merge 27 --repo MMMProd-Org/skeuomorphic-forge --squash`.
+   - `gh pr merge 1718 --repo MMMProd-Org/Mustang_DSP --squash` (PRODUCTION — care). If it drifted
+     >3 commits behind main, `git -C <mustang-worktree> fetch origin main && git rebase origin/main`
+     + `git push --force-with-lease` before merging (hygiene freshness limit = 3).
+3. Any push to #1718 re-triggers codex/copilot/qodo. Triage per the `triaging-reviewer-comments` skill —
+   classify BEFORE editing, fix only proven bugs, reply-resolve FP/out-of-scope with evidence; then
+   `bot-threads-resolved` passes. Resolve threads via GraphQL `resolveReviewThread` (exact call in the
+   session transcript). Mustang husky pre-push needs a fresh agent-review receipt per diff:
+   `bash ~/.claude/hooks/check-agent-review-gate.sh --write --review "..." --simplify "..."` from the
+   worktree BEFORE `git push`.
+4. If continuing NEW work: keep the non-negotiable method — measure a RED first (arm B, no cue), patch
+   ONLY on a proven contradiction, re-prove, lock. Never patch on a hypothesis. Own isolated worktree.
+
+Open items are all in §1 FUTURE (optional, low priority). Nothing blocks; both branches are done + green.
