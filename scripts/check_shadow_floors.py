@@ -107,18 +107,25 @@ def parse_blocks(text: str):
 
 
 def check(text: str):
-    """Return (n_checked, failures) where failures is a list of (context, reason)."""
+    """Return (recess_checked, screw_checked, failures).
+
+    Per-rule counts are returned (not a single total) so main() can fail CLOSED when
+    a rule matched ZERO stacks: a heading/keyword rename that drops the selectors
+    ("well/display/recess" or "screw head") would otherwise let the guard pass
+    without checking anything.
+    """
     failures = []
-    checked = 0
+    recess_checked = 0
+    screw_checked = 0
     for context, code in parse_blocks(text):
         # A copyable recess stack has an actual box-shadow declaration; skip prose /
         # ASCII-diagram blocks that merely mention "inset" in loose annotations.
         if RECESS_RE.search(context) and is_recess(code) and BOXSHADOW_RE.search(code):
-            checked += 1
+            recess_checked += 1
             if not block_has_rim(code):
                 failures.append((context.strip(), f"recess rim < {RIM_FLOOR} (16.2)"))
         if SCREW_RE.search(context):
-            checked += 1
+            screw_checked += 1
             layers = max_boxshadow_layers(code)
             if layers < SCREW_MIN_LAYERS:
                 failures.append(
@@ -127,7 +134,7 @@ def check(text: str):
                         f"screw stack {layers} layers, need >= {SCREW_MIN_LAYERS} (16.5)",
                     )
                 )
-    return checked, failures
+    return recess_checked, screw_checked, failures
 
 
 def selftest() -> int:
@@ -149,8 +156,16 @@ def selftest() -> int:
     # A schematic/diagram block (insets in annotations, no box-shadow declaration)
     # must NOT be judged as a copyable recess stack (regression: §14.2 anatomy).
     diagram = "## Metal Recess\n```\n<- inset 0 4px rgba(0,0,0,0.9)\n<- inset 0 -1px rgba(0,0,0,0.5)\n<- inset 3px 0 rgba(0,0,0,0.5)\n```\n"
-    checked, _ = check(diagram)
-    assert checked == 0, "a diagram block without a box-shadow decl must be skipped"
+    recess_checked, screw_checked, _ = check(diagram)
+    assert recess_checked == 0, (
+        "a diagram block without a box-shadow decl must be skipped"
+    )
+    assert screw_checked == 0, "no screw section in the diagram fixture"
+
+    # Fail-closed contract: text matching no target stack yields zero counts, which
+    # main() treats as an error (the guard must not silently pass on zero matches).
+    r0, s0, f0 = check("## Unrelated\n```\ncolor: red;\n```\n")
+    assert (r0, s0, f0) == (0, 0, []), "irrelevant text -> zero checks, zero failures"
 
     print("selftest OK")
     return 0
@@ -159,14 +174,18 @@ def selftest() -> int:
 def main() -> int:
     if "--selftest" in sys.argv:
         return selftest()
-    total_checked = 0
+    total_recess = 0
+    total_screw = 0
     all_failures = []
     for src in SOURCES:
         if not src.exists():
             print(f"::error::source file not found: {src}")
             return 1
-        checked, failures = check(src.read_text(encoding="utf-8", errors="replace"))
-        total_checked += checked
+        recess_checked, screw_checked, failures = check(
+            src.read_text(encoding="utf-8", errors="replace")
+        )
+        total_recess += recess_checked
+        total_screw += screw_checked
         all_failures += [(src.name, ctx, reason) for ctx, reason in failures]
     if all_failures:
         for name, ctx, reason in all_failures:
@@ -174,11 +193,20 @@ def main() -> int:
                 f"::error::shadow floor violated ({reason}) in {name} near: {ctx[:120]}"
             )
         print(
-            f"FAIL: {len(all_failures)}/{total_checked} recess/screw stacks below a shadow floor"
+            f"FAIL: {len(all_failures)}/{total_recess + total_screw} recess/screw stacks below a shadow floor"
+        )
+        return 1
+    # Fail CLOSED: if a selector matched nothing, the guard is silently disabled
+    # (e.g. a heading/keyword rename dropped "well/display/recess" or "screw head").
+    if total_recess == 0 or total_screw == 0:
+        print(
+            f"::error::guard matched no target stacks (recess={total_recess}, "
+            f"screw={total_screw}); selectors likely broke -- failing closed"
         )
         return 1
     print(
-        f"OK: {total_checked} stacks across {len(SOURCES)} sources all meet their shadow floor"
+        f"OK: {total_recess + total_screw} stacks across {len(SOURCES)} sources all meet "
+        f"their shadow floor (recess={total_recess}, screw={total_screw})"
     )
     return 0
 
