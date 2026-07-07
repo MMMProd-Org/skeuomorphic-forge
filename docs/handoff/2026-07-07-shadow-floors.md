@@ -46,6 +46,12 @@ Nothing is pushed. CI reproduced locally is green.
       background-clip:text), not a skill defect: the skill routes to `references/11 §43 Mechanical Key`
       and every agent shipped a conformant keypad (>=9 layers, well rim 0.22, full states, zero
       clip:text) first try. See §5.
+- [x] Enriched the skill with the user's own idiom (user-requested): added a "Thin Ledge Keypad"
+      variant to `references/11 §43` + a routing row in SKILL.md's matrix. RED was proven first
+      (3/3 arm-B agents always shipped a bombe keycap, never a ledge — the idiom was missing, not
+      contradicted), re-proven after (2/2 arm-B on a compact/flat request routed to the variant and
+      applied it: thin ledge, shared well, backlit-not-raised selection, zero background-clip:text,
+      both cited the label-doubling trap). Qualitative -> judged on code, no grep checker. commit `a85bad1`.
 - [x] Keep the eval harness as the non-regression method (the thing 5 audits lacked).
 
 ### ACTIVE (now — the decision point)
@@ -181,9 +187,10 @@ wc -c < skills/skeuomorphic-forge/SKILL.md   # -> 29021 (< 40960 cap)
   `RetainedOemZoneControl.tsx` (segmented keypad, ~20 iterations). The skill guides the pattern well
   (arm B 3/3, no RED). The one real gap is DIRECTIONAL not a defect: the skill's natural output is a
   RICH bombe keycap (9-14 layers); the user's finished taste was a THIN ledge keycap (3 layers, flat
-  press, no background-clip:text). That's an optional ENRICHMENT (document a "thin ledge keypad"
-  variant of §43), NOT a contradiction to patch — do not add a rule without a proven RED (5 audits died
-  that way).
+  press, no background-clip:text). RESOLVED (user asked): the ledge idiom is now a documented §43
+  variant (commit `a85bad1`). This did NOT break the "no rule without a proven RED" discipline — the
+  RED was measured first (3/3 always bombe = the idiom was MISSING, not contradicted) and re-proven
+  after (2/2). It is coverage of a missing idiom, not a fix to a §16 contradiction.
 - Metrics are self-reported by agents BUT each cites the exact code line -> code-verifiable.
 - ~3 agent glitches over ~25 launches (0 tool calls, garbage preamble) were discarded.
 - Arm A (no-skill control) was contaminated (agents found the skill via cwd) -> no clean baseline.
