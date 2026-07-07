@@ -274,6 +274,7 @@ Lire le minimum utile, mais le lire vraiment. Pour chaque demande, suivre la lig
 | Demande | Lire | Search obligatoire | Asset HTML a inspecter |
 |---|---|---|---|
 | Button / CTA / active press | `00-golden-examples.md` sections 1-2 + 17 matrix | `"button shadow" --code-only`, `"pressed active state"` | `power-button.html`, `color-mix-buttons.html`, `tile-buttons-divs.html` |
+| Segmented keypad / multi-state selector (2-4 keys, one well) | `00` sections 1-2 + `11-retro-industrial-patterns.md` §43 (+ thin-ledge variant) | `"pressed active state"`, `"keypad key selected"` | `rimlight-toggle-switch.html`, `color-mix-buttons.html` |
 | Toggle / rocker / switch | `00` + `02-hardware-animation-neumorphism.md` | `"switch recess"`, `"rocker active shadow"` | `skeuomorphic-switch.html`, `rimlight-toggle-switch.html`, `rocker-3d-switch.html` |
 | Gauge / VU / meter | `00` + `14-metal-recess-wells.md` + `16` | `"gauge well"`, `"needle shadow"`, `"metal recess"` | `tube-compressor-vu.html`, `credit-score-gauge.html`, `horizontal-thermometer.html` |
 | CRT / LCD / phosphor display | `00` + `07-glass-effects.md` + `11-retro-industrial-patterns.md` + `16` | `"CRT display"`, `"glass reflection"`, `"phosphor glow"` | `codepen-deep-screen.html`, `deep-screen-phosphor.html`, `lcd-db-display.html` |
