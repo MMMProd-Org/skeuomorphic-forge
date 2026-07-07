@@ -22,8 +22,15 @@ We then **generalized**: tested 3 more floors — all **hold already** (no patch
 §16.15 light-bars (focus + incident). Conclusion: the skill was NOT globally broken; it had
 2 point contradictions, now closed.
 
-**Immediate state: waiting for the user's GO to open the PR** for `fix/rim-floor-visibility`.
-Nothing is pushed. CI reproduced locally is green.
+Then generalized §16.13/§16.7 (measured, both HOLD, no patch), validated the skill against a REAL
+user artifact (a keypad — skill guides it well), enriched it with a **Thin Ledge Keypad** variant
+(user-requested, re-proven), and finally **applied the §16.2 rim fix to real production code in
+`Mustang_DSP`**: 88 recessed wells retrofitted (audit found ~94/96 flat), typecheck green + owner
+approved the 0.22 rim visually.
+
+**Immediate state: TWO validated branches, NOTHING pushed, waiting for the user's GO to open PRs** —
+skill `continue/shadow-floors` (7 commits) and `Mustang_DSP` `fix/rim-floor-wells-16-2` (5 commits).
+See §1 ACTIVE. CI/typecheck green on both.
 
 ---
 
@@ -53,21 +60,32 @@ Nothing is pushed. CI reproduced locally is green.
       applied it: thin ledge, shared well, backlit-not-raised selection, zero background-clip:text,
       both cited the label-doubling trap). Qualitative -> judged on code, no grep checker. commit `a85bad1`.
 - [x] Keep the eval harness as the non-regression method (the thing 5 audits lacked).
+- [x] **Applied the §16.2 rim fix to REAL production code.** In `Mustang_DSP` (a separate repo where
+      the user builds UIs with this skill) audited ~96 recessed wells, found ~94 broken (rim < 0.20 /
+      absent / dark), fixed **88** across 3 passes (2 shared copper patterns=37 + BROKEN-absent CRT/
+      gauge=32 + low-alpha individual=19), with 6 justified skips. **Type-check green** (`tsc --noEmit`
+      exit 0) + **owner approved the 0.22 rim visually** (before/after render, "c parfait"). Repo
+      `Mustang_DSP`, branch `fix/rim-floor-wells-16-2` (5 commits), doc `docs/RIM-FLOOR-16.2-AUDIT.md`.
+      Nothing pushed. (This IS the "real user output" item that used to be in FUTURE — now done, and it
+      confirmed the §16.2 diagnosis at scale: the flat-well bug was everywhere in real code.)
 
 ### ACTIVE (now — the decision point)
-- [ ] **User GO to open the PR** for `fix/rim-floor-visibility` (2 commits). Reco = open it.
-      Do NOT push / open PR without explicit user GO.
+**Two branches are validated and PR-ready. NOTHING pushed. Open PRs only on explicit user GO.**
+- [ ] PR #1 — the skill: repo `skeuomorphic-forge`, branch `continue/shadow-floors` (7 commits, off
+      `fix/rim-floor-visibility`). `gh pr create --base main --head continue/shadow-floors`.
+- [ ] PR #2 — real code: repo `Mustang_DSP`, branch `fix/rim-floor-wells-16-2` (5 commits, validated:
+      typecheck + visual). Run `gh pr create --base main --head fix/rim-floor-wells-16-2` FROM the
+      Mustang_DSP worktree. It is the user's PRODUCTION repo — treat with care.
 
 ### FUTURE (options, in ROI order — all optional, low priority)
-- [ ] (if user says continue) Measure §16.13 (no border on display wells) and §16.7 (2 mandatory
-      overlays) — qualitative floors; predicted to hold (rule already at point of use). Use the
-      "judge on the code" protocol (see §5), not a grep checker.
-- [ ] (highest value if reachable) Test against a REAL user output, not proxies. Everything so far
-      is measured on sub-agent proxies (they converge with the user's own §16 benchmark, but are
-      still proxies).
+- [ ] `Mustang_DSP`: the ~6 skipped wells are correct (rimmed by another means / not wells) — nothing
+      to do. A handful of the 88 could want per-context tuning if a spot ever reads too hot (0.22 is
+      centralizable); owner approved as-is for now.
 - [ ] (nice-to-have) Extend `check_shadow_floors.py` beyond `00-golden-examples.md §1` to the other
-      recess copy-sources (`references/14`, assets HTML) — LOW ROI: the 9 evals always copied stacks
+      recess copy-sources (`references/14`, assets HTML) — LOW ROI: the evals always copied stacks
       from `00-golden`, never from an asset.
+- [ ] (nice-to-have) The skill's §16.13 qualitative floor (no light-border on wells) + §16.7 (2
+      overlays) hold by measurement but have NO grep guard. Only add one if a regression ever appears.
 
 ---
 
@@ -231,11 +249,18 @@ worktree — `gh pr create --base main --head fix/rim-floor-visibility` — but 
 
 ## 9. NEXT ACTION for the continuing LLM
 
-1. Read this file fully. Run the §5 verification commands. Confirm green.
-2. Ask the user (or confirm the standing decision): **open the PR**, or **continue generalization**
-   (§16.13 / §16.7), or **stop**.
-3. If continuing generalization: apply the §3 method — measure a RED first (sub-agent eval, arm B,
-   no floor cue), only patch if a contradiction is proven, then re-prove with arm B, then lock with
-   the checker. Never patch on a hypothesis.
-4. If opening the PR: this handoff commit can be dropped/kept as you prefer (`git rm` before merge if
-   it should not ship). PR body should summarize §4 + §5.
+State: skill work DONE (7 commits, `continue/shadow-floors`); Mustang_DSP §16.2 rim retrofit DONE +
+validated (5 commits, `fix/rim-floor-wells-16-2`, typecheck green + owner visual OK). Nothing pushed.
+Two PRs pending an explicit user GO (see §1 ACTIVE).
+
+1. Read this file fully AND `Mustang_DSP` `docs/RIM-FLOOR-16.2-AUDIT.md`. Re-run the §5 verification
+   (skill) → confirm green. The Mustang_DSP branch is already typecheck-green + owner-visually-approved.
+2. Do NOT push or open any PR without a fresh explicit GO. When GO comes:
+   - Skill PR: `gh pr create --base main --head continue/shadow-floors` (body = summarize §4 + §5).
+   - Mustang_DSP PR: FROM the Mustang_DSP worktree, `gh pr create --base main --head
+     fix/rim-floor-wells-16-2` (body = summarize `docs/RIM-FLOOR-16.2-AUDIT.md`). PRODUCTION code — care.
+3. If instead continuing work: keep the non-negotiable method — measure a RED first (arm B, no cue),
+   patch ONLY on a proven contradiction, re-prove, lock. Never patch on a hypothesis. Work in YOUR OWN
+   isolated worktree (§8) — never the main checkout, never another LLM's worktree; `pwd` after every `cd`.
+
+Open items are all in §1 FUTURE (optional, low priority). Nothing is blocking; the two branches are done.
